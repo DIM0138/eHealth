@@ -1,19 +1,31 @@
-package br.com.eHealth.service;
+/*
+ * NOTE(Amanda): Essa parte deve ser implementada nas variações do framework.
+ * */
+
+package br.com.eHealth.strategy;
 
 import br.com.eHealth.model.Nutricionista;
+import br.com.eHealth.model.Profissional;
 import br.com.eHealth.model.dto.NutricionistaDTO;
+import br.com.eHealth.model.dto.ProfissionalDTO;
 import br.com.eHealth.repository.NutricionistaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
-public class NutricionistaService {
+public class NutricionistaStrategy implements ProfissionalStrategy{
 
     @Autowired
-    public NutricionistaRepository nutricionistas;
+    private NutricionistaRepository nutricionistaRepository;
 
-    public Nutricionista save(NutricionistaDTO nutricionistaDTO){
+    @Override
+    public Profissional criar(ProfissionalDTO profissionalDTO) {
         Nutricionista novoNutricionista = new Nutricionista();
+
+        NutricionistaDTO nutricionistaDTO = (NutricionistaDTO) profissionalDTO;
 
         novoNutricionista.setNomeCompleto(nutricionistaDTO.getNomeCompleto());
         novoNutricionista.setGenero(nutricionistaDTO.getGenero());
@@ -29,9 +41,13 @@ public class NutricionistaService {
         novoNutricionista.setEspecialidade(nutricionistaDTO.getEspecialidade());
         novoNutricionista.setEnderecoProfissional(nutricionistaDTO.getEnderecoProfissional());
 
-        nutricionistas.save(novoNutricionista);
+        return nutricionistaRepository.save(novoNutricionista);
+    }
 
-        return novoNutricionista;
+    @Override
+    public List<Profissional> listarTodos() {
+        List<Nutricionista> nutricionistas =  nutricionistaRepository.findAll();
+        return new ArrayList<>(nutricionistas);
     }
 
 }

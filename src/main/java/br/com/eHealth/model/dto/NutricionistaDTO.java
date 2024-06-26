@@ -1,6 +1,8 @@
-package br.com.eHealth.model.dto;
+/*
+* NOTE(Amanda): Essa parte deve ser implementada nas variações do framework.
+* */
 
-import java.util.List;
+package br.com.eHealth.model.dto;
 
 import br.com.eHealth.model.Nutricionista;
 import lombok.Data;

@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -23,7 +24,7 @@ public class Profissional extends Usuario {
 
     @OneToMany(mappedBy = "profissionalResponsavel", cascade = CascadeType.ALL)
     @JsonIgnore
-    private List<Paciente> listaPacientes;
+    private List<Paciente> listaPacientes = new ArrayList<>();
 
     public Profissional() {
         this.formacao = "";

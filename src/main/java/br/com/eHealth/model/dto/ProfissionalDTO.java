@@ -1,5 +1,6 @@
 package br.com.eHealth.model.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import br.com.eHealth.model.Paciente;
