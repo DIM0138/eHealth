@@ -1,4 +1,4 @@
-package br.com.eHealth.controller;
+package br.com.eHealth.controller.eNutri;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.eHealth.controller.eHealth.IUsuarioController;
 import br.com.eHealth.model.eHealth.dto.TokenCadastroDTO;
-import br.com.eHealth.model.eHealth.dto.UsuarioDTO;
+import br.com.eHealth.model.eNutri.dto.PacienteDTO;
 import br.com.eHealth.service.eNutri.PacienteService;
 import br.com.eHealth.service.eNutri.PacienteStrategy;
 
@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 @RestController
 @RequestMapping("/pacientes")
-public class PacienteController implements IUsuarioController{
+public class PacienteController implements IUsuarioController<PacienteDTO>{
 
     private PacienteService pacienteService;
 
@@ -33,13 +33,13 @@ public class PacienteController implements IUsuarioController{
 
     @Override
     @PostMapping
-    public UsuarioDTO criar(@RequestBody UsuarioDTO usuarioDTO) {
+    public PacienteDTO criar(@RequestBody PacienteDTO usuarioDTO) {
         return pacienteService.criar(usuarioDTO);
     }
 
     @Override
     @PatchMapping("/{id}")
-    public UsuarioDTO atualizar(@RequestBody UsuarioDTO usuarioDTO, @PathVariable Long id) {
+    public PacienteDTO atualizar(@RequestBody PacienteDTO usuarioDTO, @PathVariable Long id) {
         return pacienteService.atualizar(usuarioDTO, id);
     }
 
@@ -51,13 +51,13 @@ public class PacienteController implements IUsuarioController{
 
     @Override
     @GetMapping("/buscar/{id}")
-    public UsuarioDTO buscarPorId(@PathVariable Long id) {
+    public PacienteDTO buscarPorId(@PathVariable Long id) {
         return pacienteService.buscarPorId(id);
     }
 
     @Override
     @GetMapping("/buscar/todos")
-    public List<UsuarioDTO> buscarTodos() {
+    public List<PacienteDTO> buscarTodos() {
         return pacienteService.buscarTodos();
     }
 

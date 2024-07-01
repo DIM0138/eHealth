@@ -7,13 +7,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import br.com.eHealth.model.eHealth.dto.UsuarioDTO;
 
-public abstract interface IUsuarioController {
+public abstract interface IUsuarioController<T extends UsuarioDTO> {
 
-    public abstract UsuarioDTO criar(@RequestBody UsuarioDTO usuarioDTO);
-    public abstract UsuarioDTO atualizar(@RequestBody UsuarioDTO usuarioDTO, @PathVariable Long id);
+    public abstract T criar(@RequestBody T usuarioDTO);
+    public abstract T atualizar(@RequestBody T usuarioDTO, @PathVariable Long id);
     public abstract Boolean deletar(@PathVariable Long id);
-    public abstract UsuarioDTO buscarPorId(@PathVariable Long id);
-    public abstract List<UsuarioDTO> buscarTodos();
+    public abstract T buscarPorId(@PathVariable Long id);
+    public abstract List<T> buscarTodos();
     public abstract Boolean login(@RequestParam("login") String login, @RequestParam("senha") String senha);
     public abstract Boolean existe(@RequestParam(value = "id", required = false) Long id,
                                    @RequestParam(value = "cpf", required = false) String cpf,

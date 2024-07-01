@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -20,6 +19,7 @@ import lombok.*;
 @Getter
 @Setter
 @AllArgsConstructor
+@Builder
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Plano {
@@ -36,13 +36,14 @@ public class Plano {
     @JoinColumn(name = "profissional_id")
     private Profissional profissionalResponsavel;
 
-    @OneToMany(mappedBy = "plano", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "plano", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RegistroDiario> registrosDiarios;
 
     private LocalDate dataInicio;
 
     private LocalDate dataFim;
 
+    @Builder.Default
     private Boolean ativo = false;
 
     public Plano() {
@@ -60,5 +61,14 @@ public class Plano {
 
     public void addRegistroDiario(RegistroDiario registroDiario) {
         this.registrosDiarios.add(registroDiario);
+    }
+
+    public static class PlanoBuilder {
+        private Profissional profissionalResponsavel;
+
+        public PlanoBuilder profissional(Profissional profissional) {
+            this.profissionalResponsavel = profissional;
+            return this;
+        }
     }
 }

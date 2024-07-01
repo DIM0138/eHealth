@@ -10,10 +10,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
+@SuperBuilder
+@NoArgsConstructor
 public abstract class Usuario {
 
     @Id
@@ -30,7 +34,7 @@ public abstract class Usuario {
     private String CPF;
     @Column (nullable = false)
     private String senha;
-    
+
     private LocalDate dataNascimento;
     private String genero;
     private String endereco;

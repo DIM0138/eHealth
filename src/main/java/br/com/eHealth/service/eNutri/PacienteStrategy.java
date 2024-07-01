@@ -5,24 +5,24 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import br.com.eHealth.model.eHealth.dto.UsuarioDTO;
+import br.com.eHealth.model.eNutri.dto.PacienteDTO;
 import br.com.eHealth.repository.eNutri.PacienteRepository;
 import br.com.eHealth.service.eHealth.UsuarioStrategy;
 
 @Component
-public class PacienteStrategy extends UsuarioStrategy {
+public class PacienteStrategy extends UsuarioStrategy<PacienteDTO> {
 
     @Autowired
     private PacienteRepository repository;
 
     @Override
-    public UsuarioDTO criar(UsuarioDTO usuarioDTO) {
+    public PacienteDTO criar(PacienteDTO usuarioDTO) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'criar'");
     }
 
     @Override
-    public UsuarioDTO atualizar(UsuarioDTO usuarioDTO, Long id) {
+    public PacienteDTO atualizar(PacienteDTO usuarioDTO, Long id) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'atualizar'");
     }
@@ -34,13 +34,13 @@ public class PacienteStrategy extends UsuarioStrategy {
     }
 
     @Override
-    public UsuarioDTO buscarPorId(Long id) {
+    public PacienteDTO buscarPorId(Long id) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'buscarPorId'");
     }
 
     @Override
-    public List<UsuarioDTO> buscarTodos() {
+    public List<PacienteDTO> buscarTodos() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'buscarTodos'");
     }

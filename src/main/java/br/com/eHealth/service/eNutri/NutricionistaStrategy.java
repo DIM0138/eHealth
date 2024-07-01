@@ -6,8 +6,9 @@ import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import br.com.eHealth.exception.ResourceNotFoundException;
+import br.com.eHealth.exception.ValidationException;
 import br.com.eHealth.model.eHealth.Paciente;
-import br.com.eHealth.model.eHealth.dto.UsuarioDTO;
 import br.com.eHealth.model.eNutri.Nutricionista;
 import br.com.eHealth.model.eNutri.dto.NutricionistaDTO;
 import br.com.eHealth.model.eNutri.dto.PacienteDTO;
@@ -16,7 +17,7 @@ import br.com.eHealth.repository.eNutri.PacienteRepository;
 import br.com.eHealth.service.eHealth.ProfissionalStrategy;
 
 @Component
-public class NutricionistaStrategy extends ProfissionalStrategy {
+public class NutricionistaStrategy extends ProfissionalStrategy<NutricionistaDTO> {
 
     @Autowired
     private NutricionistaRepository nutricionistaRepository;
@@ -25,28 +26,24 @@ public class NutricionistaStrategy extends ProfissionalStrategy {
     public PacienteRepository pacienteRepository;
 
     @Override
-    public UsuarioDTO criar(UsuarioDTO usuarioDTO) {
-
-        NutricionistaDTO nutricionistaDTO = (NutricionistaDTO) usuarioDTO;
-        Nutricionista novoNutricionista = new Nutricionista();
+    public NutricionistaDTO criar(NutricionistaDTO nutricionistaDTO) {
 
         if(existe(nutricionistaDTO.getId(), nutricionistaDTO.getCpf(), nutricionistaDTO.getLogin(), nutricionistaDTO.getEmail())) {
-            return null;
+            throw new ValidationException("Nutricionista ja cadastrado.");
         }
 
-        novoNutricionista.setNomeCompleto(nutricionistaDTO.getNomeCompleto());
-        novoNutricionista.setGenero(nutricionistaDTO.getGenero());
-        novoNutricionista.setDataNascimento(nutricionistaDTO.getDataNascimento());
-        novoNutricionista.setEndereco(nutricionistaDTO.getEndereco());
-        novoNutricionista.setTelefone(nutricionistaDTO.getTelefone());
-        novoNutricionista.setEmail(nutricionistaDTO.getEmail());
-        novoNutricionista.setCPF(nutricionistaDTO.getCpf());
-        novoNutricionista.setLogin(nutricionistaDTO.getLogin());
-        novoNutricionista.setSenha(nutricionistaDTO.getSenha());
-        novoNutricionista.setCRN(nutricionistaDTO.getCRN());
-        novoNutricionista.setFormacao(nutricionistaDTO.getFormacao());
-        novoNutricionista.setEspecialidade(nutricionistaDTO.getEspecialidade());
-        novoNutricionista.setEnderecoProfissional(nutricionistaDTO.getEnderecoProfissional());
+        Nutricionista novoNutricionista = Nutricionista.builder()
+                                                       .nomeCompleto(nutricionistaDTO.getNomeCompleto())
+                                                       .genero(nutricionistaDTO.getGenero())
+                                                       .dataNascimento(nutricionistaDTO.getDataNascimento())
+                                                       .endereco(nutricionistaDTO.getEndereco())
+                                                       .telefone(nutricionistaDTO.getTelefone())
+                                                       .email(nutricionistaDTO.getEmail())
+                                                       .CPF(nutricionistaDTO.getCpf())
+                                                       .CRN(nutricionistaDTO.getCRN())
+                                                       .login(nutricionistaDTO.getLogin())
+                                                       .senha(nutricionistaDTO.getSenha())
+                                                       .build();
         
         Nutricionista nutricionistaSalvo = nutricionistaRepository.save(novoNutricionista);
 
@@ -54,7 +51,7 @@ public class NutricionistaStrategy extends ProfissionalStrategy {
     }
 
     @Override
-    public UsuarioDTO atualizar(UsuarioDTO usuarioDTO, Long id) {
+    public NutricionistaDTO atualizar(NutricionistaDTO usuarioDTO, Long id) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'atualizar'");
     }
@@ -66,13 +63,13 @@ public class NutricionistaStrategy extends ProfissionalStrategy {
     }
 
     @Override
-    public UsuarioDTO buscarPorId(Long id) {
+    public NutricionistaDTO buscarPorId(Long id) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'buscarPorId'");
     }
 
     @Override
-    public List<UsuarioDTO> buscarTodos() {
+    public List<NutricionistaDTO> buscarTodos() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'buscarTodos'");
     }
@@ -96,8 +93,12 @@ public class NutricionistaStrategy extends ProfissionalStrategy {
         return false;
     }
 
+    public Boolean existeCrn(String crn) {
+        return this.nutricionistaRepository.existsByCRN(crn);
+    }
+
     @Override
-    public List<PacienteDTO> buscarPacientesPorProfissional(Long id) {
+    public List<PacienteDTO> buscarPacientesPorProfissionalId(Long id) {
 
         List<Paciente> pacientes = pacienteRepository.findByProfissionalResponsavelId(id);
 

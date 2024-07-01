@@ -4,19 +4,19 @@ import br.com.eHealth.model.eHealth.dto.UsuarioDTO;
 
 import java.util.List;
 
-public class UsuarioService {
+public class UsuarioService<T extends UsuarioDTO> {
 
-    protected UsuarioStrategy strategy;
+    protected UsuarioStrategy<T> strategy;
 
-    public UsuarioService(UsuarioStrategy strategy) {
+    public UsuarioService(UsuarioStrategy<T> strategy) {
         this.strategy = strategy;
     }
 
-    public UsuarioDTO criar(UsuarioDTO usuarioDTO) {
+    public T criar(T usuarioDTO) {
         return this.strategy.criar(usuarioDTO);
     }
 
-    public UsuarioDTO atualizar(UsuarioDTO usuarioDTO, Long id) {
+    public T atualizar(T usuarioDTO, Long id) {
         return this.atualizar(usuarioDTO, id);
     }
 
@@ -24,11 +24,11 @@ public class UsuarioService {
         return this.strategy.deletar(id);
     }
 
-    public UsuarioDTO buscarPorId(Long id) {
+    public T buscarPorId(Long id) {
         return this.strategy.buscarPorId(id);
     }
 
-    public List<UsuarioDTO> buscarTodos() {
+    public List<T> buscarTodos() {
         return this.strategy.buscarTodos();
     }
 

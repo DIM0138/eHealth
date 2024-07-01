@@ -10,16 +10,16 @@ import br.com.eHealth.model.eHealth.dto.PlanoDTO;
 import br.com.eHealth.model.eHealth.dto.RegistroDiarioDTO;
 import br.com.eHealth.model.eHealth.dto.ResumoAtividadesDTO;
 
-public abstract interface IPlanoController {
+public abstract interface IPlanoController<P extends PlanoDTO, R extends RegistroDiarioDTO, A extends AtividadeDTO> {
 
-   public abstract PlanoDTO criarPlano(@RequestBody PlanoDTO planoDTO);
-   public abstract PlanoDTO ativarPlano(@PathVariable Long id);
+   public abstract P criarPlano(@RequestBody P planoDTO);
+   public abstract P ativarPlano(@PathVariable Long id);
    public abstract Boolean deletarPlano(@PathVariable Long id);
-   public abstract AtividadeDTO criarAtividade(@RequestBody AtividadeDTO atividadeDTO);
-   public abstract AtividadeDTO atualizarAtividade(@RequestBody AtividadeDTO atividadeDTO);
+   public abstract A criarAtividade(@RequestBody A atividadeDTO);
+   public abstract A atualizarAtividade(@RequestBody A atividadeDTO);
    public abstract Boolean deletarAtividade(@PathVariable Long id);
-   public abstract AtividadeDTO responderAtividade(@RequestBody AtividadeDTO atividadeDTO);
-   public abstract RegistroDiarioDTO responderRegistroDiario(@RequestBody RegistroDiarioDTO registroDiarioDTO);
-   public abstract List<PlanoDTO> buscarPlanosPorProfissionalId(@PathVariable Long id);
+   public abstract A responderAtividade(@RequestBody A atividadeDTO);
+   public abstract R responderRegistroDiario(@RequestBody R registroDiarioDTO);
+   public abstract List<P> buscarPlanosPorProfissionalId(@PathVariable Long id);
    public abstract ResumoAtividadesDTO gerarResumoAtividades(@PathVariable Long id);
 }

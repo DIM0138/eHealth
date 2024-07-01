@@ -3,10 +3,14 @@ package br.com.eHealth.model.eHealth.dto;
 import java.time.LocalDate;
 
 import br.com.eHealth.model.eHealth.Usuario;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
-public abstract class UsuarioDTO {
+@AllArgsConstructor
+@NoArgsConstructor
+public class UsuarioDTO {
     private long id;
     private String nomeCompleto;
     private String genero;
@@ -17,8 +21,6 @@ public abstract class UsuarioDTO {
     private String cpf;
     private String login;
     private String senha;
-
-    UsuarioDTO() {}
 
     public UsuarioDTO(Usuario usuario) {
         this.id = usuario.getId();

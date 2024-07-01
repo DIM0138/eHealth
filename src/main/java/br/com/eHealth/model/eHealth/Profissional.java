@@ -1,25 +1,23 @@
 package br.com.eHealth.model.eHealth;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import java.util.List;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Data
+@SuperBuilder
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class Profissional extends Usuario {
-
-    @OneToMany(mappedBy = "profissionalResponsavel", cascade = CascadeType.ALL)
-    private List<Paciente> listaPacientes;
+@Inheritance(strategy = InheritanceType.JOINED)
+public abstract class Profissional extends Usuario {
 
     private String formacao;
     private String especialidade;
     private String enderecoProfissional;
 
-    public Profissional() {
-        this.formacao = "";
-        this.especialidade = "";
-        this.enderecoProfissional = "";
-    }
 }
