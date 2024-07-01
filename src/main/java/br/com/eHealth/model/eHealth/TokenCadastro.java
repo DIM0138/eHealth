@@ -1,7 +1,4 @@
-package br.com.eHealth.model;
-
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+package br.com.eHealth.model.eHealth;
 
 import br.com.eHealth.util.RandomTokenGenerator;
 import jakarta.persistence.Entity;
@@ -12,7 +9,6 @@ import lombok.Data;
 
 @Data
 @Entity
-@JsonIdentityInfo(scope = TokenCadastro.class, generator = ObjectIdGenerators.PropertyGenerator.class, property = "token")
 public class TokenCadastro {
 
     @Id

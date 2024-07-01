@@ -1,10 +1,10 @@
-package br.com.eHealth.model.dto;
+package br.com.eHealth.model.eHealth.dto;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import br.com.eHealth.model.Paciente;
-import br.com.eHealth.model.Profissional;
+import br.com.eHealth.model.eHealth.Paciente;
+import br.com.eHealth.model.eHealth.Profissional;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

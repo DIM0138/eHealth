@@ -1,8 +1,8 @@
-package br.com.eHealth.model.dto;
+package br.com.eHealth.model.eHealth.dto;
 
 import java.time.LocalDate;
 
-import br.com.eHealth.model.Usuario;
+import br.com.eHealth.model.eHealth.Usuario;
 import lombok.Data;
 
 @Data
@@ -20,7 +20,7 @@ public abstract class UsuarioDTO {
 
     UsuarioDTO() {}
 
-    UsuarioDTO(Usuario usuario) {
+    public UsuarioDTO(Usuario usuario) {
         this.id = usuario.getId();
         this.nomeCompleto = usuario.getNomeCompleto();
         this.genero = usuario.getGenero();

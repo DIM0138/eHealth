@@ -2,9 +2,10 @@
 * NOTE(Amanda): Essa parte deve ser implementada nas variações do framework.
 * */
 
-package br.com.eHealth.model.dto;
+package br.com.eHealth.model.eNutri.dto;
 
-import br.com.eHealth.model.Nutricionista;
+import br.com.eHealth.model.eHealth.dto.ProfissionalDTO;
+import br.com.eHealth.model.eNutri.Nutricionista;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

@@ -1,17 +1,17 @@
-package br.com.eHealth.model;
+package br.com.eHealth.model.eHealth;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
@@ -21,7 +21,7 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @Entity
-@JsonIdentityInfo(scope = Plano.class, generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Plano {
 
     @Id
@@ -33,15 +33,15 @@ public class Plano {
     private Paciente paciente;
 
     @ManyToOne
-    @JoinColumn(name = "nutricionista_id")
+    @JoinColumn(name = "profissional_id")
     private Profissional profissionalResponsavel;
+
+    @OneToMany(mappedBy = "plano", cascade = CascadeType.ALL)
+    private List<RegistroDiario> registrosDiarios;
 
     private LocalDate dataInicio;
 
     private LocalDate dataFim;
-
-    @OneToMany(mappedBy = "plano", cascade = CascadeType.ALL)
-    private List<RegistroDiario> registrosDiarios;
 
     private Boolean ativo = false;
 

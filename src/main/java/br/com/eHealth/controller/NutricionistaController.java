@@ -3,47 +3,64 @@
  * */
 package br.com.eHealth.controller;
 
-import br.com.eHealth.model.Nutricionista;
-import br.com.eHealth.model.Profissional;
-import br.com.eHealth.model.dto.NutricionistaDTO;
-import br.com.eHealth.model.dto.ProfissionalDTO;
-import br.com.eHealth.service.ProfissionalService;
-import br.com.eHealth.strategy.NutricionistaStrategy;
+import br.com.eHealth.controller.eHealth.IProfissionalController;
+import br.com.eHealth.model.eHealth.dto.UsuarioDTO;
+import br.com.eHealth.model.eNutri.dto.PacienteDTO;
+import br.com.eHealth.service.eNutri.NutricionistaService;
+import br.com.eHealth.service.eNutri.NutricionistaStrategy;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-
 
 @RestController
 @RequestMapping("/nutricionistas")
-public class NutricionistaController {
+public class NutricionistaController implements IProfissionalController {
 
-    private final ProfissionalService profissionalService;
+    private final NutricionistaService nutricionistaService;
 
-    @Autowired
-    public NutricionistaController(NutricionistaStrategy nutricionistaStrategy) {
-        this.profissionalService = new ProfissionalService(nutricionistaStrategy);
+    public NutricionistaController(@Autowired NutricionistaStrategy nutricionistaStrategy) {
+        this.nutricionistaService = new NutricionistaService(nutricionistaStrategy);
     }
 
-    @PostMapping
-    public ResponseEntity<NutricionistaDTO> criar(@RequestBody NutricionistaDTO nutricionistaDTO) {
-        Nutricionista nutricionistaSalvo = (Nutricionista) profissionalService.criarProfissional(nutricionistaDTO);
-        NutricionistaDTO nutricionistaSalvoDTO = new NutricionistaDTO(nutricionistaSalvo);
-        return ResponseEntity.status(HttpStatus.CREATED).body(nutricionistaSalvoDTO);
+    @Override
+    public UsuarioDTO criar(UsuarioDTO usuarioDTO) {
+        return this.nutricionistaService.criar(usuarioDTO);
     }
 
-    @GetMapping
-    public ResponseEntity<List<NutricionistaDTO>> listarTodos() {
-        List<Profissional> profissionais = profissionalService.listarTodos();
+    @Override
+    public UsuarioDTO atualizar(UsuarioDTO usuarioDTO, Long id) {
+        return this.nutricionistaService.atualizar(usuarioDTO, id);
+    }
 
-        List<NutricionistaDTO> nutricionistasDTO = profissionais.stream().map(
-                profissional -> new NutricionistaDTO((Nutricionista) profissional)
-        ).collect(Collectors.toList());
-        return ResponseEntity.ok(nutricionistasDTO);
+    @Override
+    public Boolean deletar(Long id) {
+        return this.nutricionistaService.deletar(id);
+    }
+
+    @Override
+    public UsuarioDTO buscarPorId(Long id) {
+        return this.nutricionistaService.buscarPorId(id);
+    }
+
+    @Override
+    public List<UsuarioDTO> buscarTodos() {
+        return this.nutricionistaService.buscarTodos();
+    }
+
+    @Override
+    public Boolean login(String login, String senha) {
+        return this.nutricionistaService.login(login, senha);
+    }
+
+    @Override
+    public Boolean existe(Long id, String cpf, String login, String email) {
+        return this.nutricionistaService.existe(id, cpf, login, email);
+    }
+
+    @Override
+    public List<PacienteDTO> buscarPacientesPorProfissionalId(Long id) {
+        return this.nutricionistaService.buscarPacientesPorProfissional(id);
     }
 }

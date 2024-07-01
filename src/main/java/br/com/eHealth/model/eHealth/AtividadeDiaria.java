@@ -1,4 +1,4 @@
-package br.com.eHealth.model;
+package br.com.eHealth.model.eHealth;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -7,6 +7,7 @@ import java.time.LocalTime;
 
 @Data
 @Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 public class AtividadeDiaria {
     public enum Emocao {
         FELIZ,

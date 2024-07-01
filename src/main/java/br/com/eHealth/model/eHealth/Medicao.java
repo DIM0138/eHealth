@@ -1,4 +1,4 @@
-package br.com.eHealth.model;
+package br.com.eHealth.model.eHealth;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
