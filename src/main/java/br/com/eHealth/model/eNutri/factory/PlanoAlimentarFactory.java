@@ -38,7 +38,7 @@ public class PlanoAlimentarFactory implements PlanoFactory {
         Plano novoPlano = Plano.builder()
                                .dataInicio(planoDTO.getDataInicio())
                                .dataFim(planoDTO.getDataFim())
-                               .paciente(pacienteRepository.findById(planoDTO.getPaciente().getId()).get())
+                               .paciente(pacienteRepository.findById(planoDTO.getPaciente().getId().orElseThrow()).orElseThrow())
                                .profissional(nutricionistaRepository.findById(planoDTO.getProfissionalResponsavel()).get())
                                .registrosDiarios(new ArrayList<RegistroDiario>())
                                .build();

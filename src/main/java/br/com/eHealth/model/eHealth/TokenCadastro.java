@@ -1,5 +1,7 @@
 package br.com.eHealth.model.eHealth;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import br.com.eHealth.util.RandomTokenGenerator;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -12,12 +14,16 @@ import lombok.Data;
 public class TokenCadastro {
 
     @Id
+    @JsonProperty("token")
     private String token;
 
-    @OneToOne
-    @JoinColumn(name = "paciente_id")
-    private Paciente paciente;
+    @JsonProperty("email")
+    private String email;
 
+    @JsonProperty("nome_paciente")
+    private String nomePaciente;
+
+    @JsonProperty("usado")
     private boolean usado;
 
     public TokenCadastro () {

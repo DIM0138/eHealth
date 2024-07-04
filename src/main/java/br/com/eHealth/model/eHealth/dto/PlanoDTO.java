@@ -1,6 +1,5 @@
 package br.com.eHealth.model.eHealth.dto;
 
-import br.com.eHealth.model.eNutri.dto.PacienteDTO;
 import lombok.Data;
 
 import java.time.LocalDate;

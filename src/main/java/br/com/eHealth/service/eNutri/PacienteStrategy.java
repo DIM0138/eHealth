@@ -1,60 +1,56 @@
 package br.com.eHealth.service.eNutri;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import br.com.eHealth.model.eNutri.dto.PacienteDTO;
+import br.com.eHealth.model.eHealth.Paciente;
+import br.com.eHealth.model.eHealth.dto.PacienteDTO;
+import br.com.eHealth.model.eHealth.dto.UsuarioDTO;
+import br.com.eHealth.model.eNutri.Nutricionista;
+import br.com.eHealth.repository.eNutri.NutricionistaRepository;
 import br.com.eHealth.repository.eNutri.PacienteRepository;
 import br.com.eHealth.service.eHealth.UsuarioStrategy;
 
 @Component
-public class PacienteStrategy extends UsuarioStrategy<PacienteDTO> {
+public class PacienteStrategy extends UsuarioStrategy<Paciente, PacienteDTO> {
 
     @Autowired
-    private PacienteRepository repository;
+    private PacienteRepository pacienteRepository;
+
+    @Autowired
+    private NutricionistaRepository nutricionistaRepository;
 
     @Override
-    public PacienteDTO criar(PacienteDTO usuarioDTO) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'criar'");
+    public ArrayList<String> validateSpecifics(ArrayList<String> errors, UsuarioDTO usuarioDTO) {
+        PacienteDTO pacienteDTO = (PacienteDTO) usuarioDTO;
+
+        if (pacienteDTO.getProfissionalResponsavel() == null || pacienteDTO.getProfissionalResponsavel().isEmpty()) {
+            errors.add("Um profissional responsável deve ser informado");
+        }
+
+        else if (!nutricionistaRepository.existsById(pacienteDTO.getProfissionalResponsavel().get())) {
+            errors.add("O profissional responsável informado não existe.");
+        }
+
+        return errors;
     }
 
     @Override
-    public PacienteDTO atualizar(PacienteDTO usuarioDTO, Long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'atualizar'");
-    }
+    public Paciente saveSpecifics(PacienteDTO usuarioDTO, Paciente novoUsuario) {
+        PacienteDTO pacienteDTO = (PacienteDTO) usuarioDTO;
 
-    @Override
-    public Boolean deletar(Long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deletar'");
-    }
+        Long idNutricionista = pacienteDTO.getProfissionalResponsavel().get();
+        Nutricionista nutricionistaResponsavel = nutricionistaRepository.findById(idNutricionista).get();
+        novoUsuario.setProfissionalResponsavel(nutricionistaResponsavel);
 
-    @Override
-    public PacienteDTO buscarPorId(Long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'buscarPorId'");
+        return pacienteRepository.save(novoUsuario);
     }
-
+    
     @Override
-    public List<PacienteDTO> buscarTodos() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'buscarTodos'");
-    }
-
-    @Override
-    public Boolean login(String login, String senha) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'login'");
-    }
-
-    @Override
-    public Boolean existe(Long id, String cpf, String login, String email) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'existe'");
+    public Paciente usuarioFactory(PacienteDTO usuarioDTO) {
+        return new Paciente();
     }
 
 }
