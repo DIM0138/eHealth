@@ -21,7 +21,7 @@ public class PacienteDTO extends UsuarioDTO {
     @JsonProperty("profissional_responsavel")
     private Optional<Long> profissionalResponsavel;
 
-    @JsonProperty("planoAtual")
+    @JsonProperty("plano_atual")
     private Optional<Long> planoAtual;
     
     public PacienteDTO(Paciente paciente) {

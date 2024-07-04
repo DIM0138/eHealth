@@ -22,6 +22,9 @@ public class UsuarioDTO {
     @JsonProperty("id")
     private Optional<Long> id;
 
+    @JsonProperty("token")
+    private Optional<String> token;
+
     @JsonProperty("nome_completo")
     private Optional<String> nomeCompleto;
 

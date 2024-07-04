@@ -2,6 +2,7 @@ package br.com.eHealth.model.eHealth;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import br.com.eHealth.model.eHealth.dto.ProfissionalDTO;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
@@ -28,5 +29,7 @@ public abstract class Profissional extends Usuario {
 
     @JsonProperty("endereco_profissional")
     private String enderecoProfissional;
+
+    public abstract ProfissionalDTO toDTO();
 
 }

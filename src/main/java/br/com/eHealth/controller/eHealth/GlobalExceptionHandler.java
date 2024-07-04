@@ -10,7 +10,6 @@ import br.com.eHealth.exception.ResourceNotFoundException;
 import br.com.eHealth.exception.ValidationException;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
  
 
 @ControllerAdvice
@@ -46,6 +45,8 @@ public class GlobalExceptionHandler {
         ErrorResponse error = new ErrorResponse();
         error.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         error.setMessage(e.getMessage());
+
+        e.printStackTrace();
 
         return error;
     }

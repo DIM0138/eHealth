@@ -1,7 +1,5 @@
 package br.com.eHealth.exception;
 
-import org.springframework.http.HttpStatusCode;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

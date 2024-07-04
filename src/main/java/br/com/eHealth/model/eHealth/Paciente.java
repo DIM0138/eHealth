@@ -1,5 +1,7 @@
 package br.com.eHealth.model.eHealth;
 
+import java.util.Optional;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -35,7 +37,15 @@ public  class Paciente extends Usuario{
     public PacienteDTO toDTO () {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.findAndRegisterModules();
+        PacienteDTO pacienteDTO = objectMapper.convertValue(this, PacienteDTO.class);
         
-        return objectMapper.convertValue(this, PacienteDTO.class);
+        if(this.profissionalResponsavel != null){
+            pacienteDTO.setProfissionalResponsavel(Optional.ofNullable(this.profissionalResponsavel.getId()));
+        }
+
+        if(this.planoAtual != null){
+            pacienteDTO.setPlanoAtual(Optional.ofNullable(this.planoAtual.getId()));
+        }
+        return pacienteDTO;
     }
 }

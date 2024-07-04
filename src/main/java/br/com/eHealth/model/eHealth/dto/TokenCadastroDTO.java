@@ -18,6 +18,9 @@ public class TokenCadastroDTO {
     @JsonProperty("nome_paciente")
     private Optional<String> nomePaciente;
 
+    @JsonProperty("profissional_responsavel")
+    private Optional<Long> profissionalResponsavel;
+
     @JsonProperty("usado")
     private Optional<Boolean> usado;
 }

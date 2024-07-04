@@ -1,20 +1,19 @@
 package br.com.eHealth.service.eHealth;
 
 import br.com.eHealth.exception.ResourceNotFoundException;
+import br.com.eHealth.exception.UnauthorizedAccessException;
 import br.com.eHealth.exception.ValidationException;
+import br.com.eHealth.model.eHealth.Profissional;
 import br.com.eHealth.model.eHealth.Usuario;
 import br.com.eHealth.model.eHealth.dto.UsuarioDTO;
 import br.com.eHealth.repository.eHealth.UsuarioRepository;
 import jakarta.transaction.Transactional;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-
 import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -28,10 +27,13 @@ public abstract class UsuarioService<T extends Usuario, DTO extends UsuarioDTO> 
 
     @Autowired
     protected UsuarioRepository<T> usuarioRepository;
+
+    @Autowired
+    protected UsuarioRepository<Profissional> profissionalRepository;
     
     @Transactional
     public UsuarioDTO criar(DTO usuarioDTO) {
-        ArrayList<String> errors = this.usuarioStrategy.validateUser(usuarioDTO);
+        ArrayList<String> errors = this.usuarioStrategy.validateCreateUser(usuarioDTO);
 
         if (!errors.isEmpty()) {
             throw new ValidationException(errors);
@@ -42,14 +44,16 @@ public abstract class UsuarioService<T extends Usuario, DTO extends UsuarioDTO> 
         return novoUsuario.toDTO();
     }
 
+    @Transactional
     public UsuarioDTO atualizar(DTO usuarioDTO, Long id) {
-        ArrayList<String> errors = this.usuarioStrategy.validateUser(usuarioDTO);
+
+        T usuario = this.buscarPorId(id);
+
+        ArrayList<String> errors = this.usuarioStrategy.validateUpdateUser(usuarioDTO);
 
         if (!errors.isEmpty()) {
             throw new ValidationException(errors);
         }
-
-        T usuario = this.buscarPorId(id);
 
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.findAndRegisterModules();
@@ -63,7 +67,6 @@ public abstract class UsuarioService<T extends Usuario, DTO extends UsuarioDTO> 
         }
 
         return this.usuarioRepository.save(usuario).toDTO();
-
     }
 
     public Boolean deletar(Long id) {
@@ -95,7 +98,19 @@ public abstract class UsuarioService<T extends Usuario, DTO extends UsuarioDTO> 
     }
 
     public Boolean login(String login, String senha) {
-        return null;
+        Usuario usuario;
+        try {
+            usuario = this.usuarioRepository.findByLogin(login);
+        }
+        catch (NoSuchElementException e) {
+            throw new UnauthorizedAccessException("Login ou senha inválidos.");
+        }
+
+        if (!usuario.getSenha().equals(senha)) {
+            throw new UnauthorizedAccessException("Login ou senha inválidos.");
+        }
+
+        return true;
     }
 
     public Boolean existe(Long id, String cpf, String login, String email) {

@@ -14,7 +14,7 @@ import br.com.eHealth.service.eHealth.PlanoService;
 
 public abstract class PlanoController<P extends PlanoDTO, R extends RegistroDiarioDTO, A extends AtividadeDTO> {
 
-   public PlanoService planoService;
+   public PlanoService<P, R, A> planoService;
 
    public Plano criarPlano(@RequestBody P planoDTO) {
       return null;
