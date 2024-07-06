@@ -1,5 +1,6 @@
 package br.com.eHealth.model.eHealth;
 
+import br.com.eHealth.model.eHealth.dto.TratamentoDTO;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -19,4 +20,6 @@ public abstract class Tratamento {
 
     private String nome;
     private String descricao;
+
+    public abstract TratamentoDTO toDTO();
 }
