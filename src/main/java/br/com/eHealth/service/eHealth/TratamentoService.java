@@ -49,7 +49,7 @@ public abstract class TratamentoService<T extends Tratamento, DTO extends Tratam
 
     public Tratamento buscarPorId(long id) {
         try {
-            Tratamento tratamento = this.tratamentoRepository.findById(id).get();
+            Tratamento tratamento = tratamentoRepository.findById(id).get();
             return tratamento;
         } catch (NoSuchElementException e) {
             throw new ResourceNotFoundException("Tratamento de ID " + id + " não encontrado.");

@@ -10,7 +10,7 @@ public class PlanoDTO {
     
     private long id;
 
-    private PacienteDTO paciente;
+    private long paciente;
 
     private long profissionalResponsavel;
 
