@@ -4,6 +4,10 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.com.eHealth.model.eHealth.dto.PlanoDTO;
+import br.com.eHealth.model.eHealth.dto.RegistroDiarioDTO;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -28,14 +32,17 @@ public class Plano {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "paciente_id")
     private Paciente paciente;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "profissional_id")
     private Profissional profissionalResponsavel;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "plano", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RegistroDiario> registrosDiarios;
 
@@ -48,6 +55,10 @@ public class Plano {
 
     public Plano() {
         this.registrosDiarios = new ArrayList<RegistroDiario>();
+    }
+
+    public Plano(PlanoBuilder builder) {
+        this.profissionalResponsavel = builder.profissionalResponsavel;
     }
 
     public RegistroDiario getRegistroDiarioByDate(LocalDate data) {
@@ -63,6 +74,10 @@ public class Plano {
         this.registrosDiarios.add(registroDiario);
     }
 
+    public static PlanoBuilder builder() {
+        return new PlanoBuilder();
+    }
+
     public static class PlanoBuilder {
         private Profissional profissionalResponsavel;
 
@@ -70,5 +85,26 @@ public class Plano {
             this.profissionalResponsavel = profissional;
             return this;
         }
+
+        public Plano build() {
+            return new Plano(this);
+        }
+    }
+
+    public PlanoDTO toDTO() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.findAndRegisterModules();
+        PlanoDTO planoDTO = objectMapper.convertValue(this, PlanoDTO.class);
+
+        List<RegistroDiarioDTO> registrosDiarios = this.getRegistrosDiarios()
+                .stream()
+                .map(RegistroDiario::toDTO)
+                .toList();
+
+        planoDTO.setPaciente(this.paciente.getId());
+        planoDTO.setProfissionalResponsavel(this.profissionalResponsavel.getId());
+        planoDTO.setRegistrosDiarios(registrosDiarios);
+
+        return planoDTO;
     }
 }

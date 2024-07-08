@@ -1,17 +1,20 @@
 package br.com.eHealth.model.eNutri;
 
 import br.com.eHealth.model.eHealth.Tratamento;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.CollectionTable;
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.OneToMany;
+import br.com.eHealth.model.eHealth.dto.UsuarioDTO;
+import br.com.eHealth.model.eNutri.dto.ReceitaDTO;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-public class Refeicao extends Tratamento {
+@Entity
+@Data
+@NoArgsConstructor
+@Inheritance(strategy = InheritanceType.JOINED)
+public class Receita extends Tratamento {
     public enum TipoRefeicao {
         CAFE,
         ALMOCO,
@@ -46,4 +49,12 @@ public class Refeicao extends Tratamento {
 
     @ElementCollection
     private List<String> alergicos;
+
+    @Override
+    public ReceitaDTO toDTO() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.findAndRegisterModules();
+
+        return objectMapper.convertValue(this, ReceitaDTO.class);
+    }
 }
