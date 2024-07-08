@@ -17,22 +17,20 @@ public class NutricionistaStrategy extends UsuarioStrategy<Nutricionista, Nutric
     private NutricionistaRepository nutricionistaRepository;
 
     @Override
-    public ArrayList<String> validateMandatoryFieldsImp(NutricionistaDTO nutricionistaDTO, ArrayList<String> errors) {
+    public void validateMandatoryFieldsImp(NutricionistaDTO nutricionistaDTO, ArrayList<String> errors) {
         
         if (nutricionistaDTO.getCRN() == null || nutricionistaDTO.getCRN().isEmpty()) {
             errors.add("Um CRN deve ser informado");
         }
 
-        return errors;
     }
     @Override
-    public ArrayList<String> validateFieldConstraintsImp(NutricionistaDTO nutricionistaDTO, ArrayList<String> errors) {
+    public void validateFieldConstraintsImp(NutricionistaDTO nutricionistaDTO, ArrayList<String> errors) {
 
         if (nutricionistaDTO.getCRN() != null && nutricionistaDTO.getCRN().isPresent() && nutricionistaRepository.existsByCRN(nutricionistaDTO.getCRN().get())) {
             errors.add("O CRN informado já foi cadastrado");
         }
         
-        return errors;
     }
 
     @Override

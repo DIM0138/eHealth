@@ -12,15 +12,13 @@ import br.com.eHealth.service.eHealth.UsuarioStrategy;
 public class PacienteStrategy extends UsuarioStrategy<Paciente, PacienteDTO> {
 
     @Override
-    public ArrayList<String> validateMandatoryFieldsImp(PacienteDTO pacienteDTO, ArrayList<String> errors) {
+    public void validateMandatoryFieldsImp(PacienteDTO pacienteDTO, ArrayList<String> errors) {
 
-        return errors;
     }
 
     @Override
-    public ArrayList<String> validateFieldConstraintsImp(PacienteDTO pacienteDTO, ArrayList<String> errors) {
+    public void validateFieldConstraintsImp(PacienteDTO pacienteDTO, ArrayList<String> errors) {
 
-        return errors;
     }
     
     @Override

@@ -36,7 +36,7 @@ public abstract class UsuarioStrategy<T extends Usuario, DTO extends UsuarioDTO>
     @Autowired
     private TokenCadastroService tokenService;
 
-    public final ArrayList<String> validateMandatoryFields(DTO usuarioDTO, ArrayList<String> errors) {
+    private final void validateMandatoryFields(DTO usuarioDTO, ArrayList<String> errors) {
         
         if (usuarioDTO.getNomeCompleto() == null || usuarioDTO.getNomeCompleto().isEmpty()) {
             errors.add("Um nome deve ser informado.");
@@ -58,10 +58,10 @@ public abstract class UsuarioStrategy<T extends Usuario, DTO extends UsuarioDTO>
             errors.add("Um CPF deve ser informado.");
         }
 
-        return this.validateMandatoryFieldsImp(usuarioDTO, errors);
+        this.validateMandatoryFieldsImp(usuarioDTO, errors);
     }
 
-    public final ArrayList<String> validateFieldConstraints (DTO usuarioDTO, ArrayList<String> errors) {
+    private final void validateFieldConstraints (DTO usuarioDTO, ArrayList<String> errors) {
 
     if (usuarioDTO.getNomeCompleto() != null && usuarioDTO.getNomeCompleto().isPresent() && usuarioDTO.getNomeCompleto().get().length() > 50) {
         errors.add("O nome informado deve ter no máximo 50 caracteres.");
@@ -129,7 +129,7 @@ public abstract class UsuarioStrategy<T extends Usuario, DTO extends UsuarioDTO>
         }
     }
 
-        return this.validateFieldConstraintsImp(usuarioDTO, errors);
+        this.validateFieldConstraintsImp(usuarioDTO, errors);
     }
 
     public final ArrayList<String> validateCreateUser(DTO usuarioDTO) {
@@ -213,9 +213,9 @@ public abstract class UsuarioStrategy<T extends Usuario, DTO extends UsuarioDTO>
         return this.repository.save(novoUsuario);
     }
 
-    public abstract T usuarioFactory();
+    protected abstract T usuarioFactory();
 
-    public abstract ArrayList<String> validateMandatoryFieldsImp(DTO usuarioDTO, ArrayList<String> errors);
+    protected abstract void validateMandatoryFieldsImp(DTO usuarioDTO, ArrayList<String> errors);
 
-    public abstract ArrayList<String> validateFieldConstraintsImp(DTO usuarioDTO, ArrayList<String> errors);
+    protected abstract void validateFieldConstraintsImp(DTO usuarioDTO, ArrayList<String> errors);
 }

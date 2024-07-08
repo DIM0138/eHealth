@@ -1,0 +1,132 @@
+package br.com.eHealth.service.eHealth;
+
+import java.util.ArrayList;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import br.com.eHealth.model.eHealth.Medicao;
+import br.com.eHealth.model.eHealth.MedicaoRelatorio;
+import br.com.eHealth.model.eHealth.Paciente;
+import br.com.eHealth.model.eHealth.Profissional;
+import br.com.eHealth.model.eHealth.Relatorio;
+import br.com.eHealth.model.eHealth.dto.RelatorioDTO;
+import br.com.eHealth.repository.eHealth.MedicaoRepository;
+import br.com.eHealth.repository.eHealth.RelatorioRepository;
+import br.com.eHealth.repository.eHealth.UsuarioRepository;
+
+@Component
+public abstract class RelatorioStrategy<T extends Relatorio, DTO extends RelatorioDTO, M extends Medicao, MR extends MedicaoRelatorio> {
+    
+    @Autowired
+    private RelatorioRepository<T> relatorioRepository;
+
+    @Autowired
+    private UsuarioRepository<Paciente> pacienteRepository;
+
+    @Autowired 
+    private UsuarioRepository<Profissional> profissionalRepository;
+
+    @Autowired
+    private MedicaoRepository<Medicao> medicaoRepository;
+
+    public final ArrayList<String> validateCreateRelatorio(DTO relatorioDTO) {
+
+        ArrayList<String> errors = new ArrayList<String>();
+
+        if(this.relatorioRepository.existsByDataConsultaAndPacienteId(relatorioDTO.getDataConsulta().get(), relatorioDTO.getPaciente().get())) {
+            errors.add("O paciente informado já possui um relatório para esta data.");
+            return errors;
+        }
+
+        validateMandatoryFields(relatorioDTO, errors);
+
+        if(!errors.isEmpty()) {
+            return errors;
+        }
+
+        validateFieldConstraints(relatorioDTO, errors);
+
+        return errors;
+    }
+
+    private final void validateMandatoryFields(DTO relatorioDTO, ArrayList<String> errors) {
+
+        if(relatorioDTO.getPaciente() == null || relatorioDTO.getPaciente().isEmpty()) {
+            errors.add("Um paciente deve ser informado");
+        }
+
+        if(relatorioDTO.getProfissionalResponsavel() == null || relatorioDTO.getProfissionalResponsavel().isEmpty()) {
+            errors.add("Um profissional responsável deve ser informado");
+        }
+
+        if(relatorioDTO.getDataConsulta() == null || relatorioDTO.getDataConsulta().isEmpty()) {
+            errors.add("Uma data de consulta deve ser informada");
+        }
+
+        if(relatorioDTO.getMedicoes() == null || relatorioDTO.getMedicoes().isEmpty() || relatorioDTO.getMedicoes().get().isEmpty()) {
+            errors.add("Ao menos uma medição deve ser informada.");
+        }
+
+        for(MedicaoRelatorio medicaoRelatorio : relatorioDTO.getMedicoes().get()) {
+            if(medicaoRelatorio.getValor() == null){
+                errors.add("O valor de " + medicaoRelatorio.getMedicao().getNome() + " deve ser informado.");
+            }
+        }
+
+        validateMandatoryFieldsImp(relatorioDTO, errors);
+    }
+
+    private final void validateFieldConstraints(DTO relatorioDTO, ArrayList<String> errors) {
+
+        Optional<Paciente> paciente = this.pacienteRepository.findById(relatorioDTO.getPaciente().get());
+
+        if(paciente.isEmpty()) {
+            errors.add("O paciente informado não existe.");
+        }
+
+        Optional<Profissional> profissional = this.profissionalRepository.findById(relatorioDTO.getProfissionalResponsavel().get());
+
+        if(profissional.isEmpty()) {
+            errors.add("O profissional responsável informado não existe.");
+        }
+
+        validateFieldConstraintsImp(relatorioDTO, errors);
+    }
+
+    public final T save(DTO relatorioDTO) {
+
+        T novoRelatorio = this.relatorioFactory();
+
+        Paciente paciente = this.pacienteRepository.findById(relatorioDTO.getPaciente().get()).get();
+        Profissional profissional = this.profissionalRepository.findById(relatorioDTO.getProfissionalResponsavel().get()).get();
+
+        novoRelatorio.setPaciente(paciente);
+        novoRelatorio.setProfissionalResponsavel(profissional);
+        novoRelatorio.setDataConsulta(relatorioDTO.getDataConsulta().get());
+        novoRelatorio.setMedicoes(relatorioDTO.getMedicoes().get());
+
+        for(MedicaoRelatorio medicaoRelatorio : relatorioDTO.getMedicoes().get()) {
+            Optional<Medicao> medicaoExistente = this.medicaoRepository.findOneByNomeIgnoreCaseAndUnidadeIgnoreCase(medicaoRelatorio.getMedicao().getNome(), medicaoRelatorio.getMedicao().getUnidade());
+            if(medicaoExistente.isPresent()) {
+                medicaoRelatorio.setMedicao(medicaoExistente.get());
+            }
+            else {
+                Medicao novaMedicao = this.medicaoRepository.save(medicaoRelatorio.getMedicao());
+                medicaoRelatorio.setMedicao(novaMedicao);
+            }
+        }
+
+        novoRelatorio.setMedicoes(relatorioDTO.getMedicoes().get());
+
+        T relatorioSalvo = this.relatorioRepository.save(novoRelatorio);
+
+        return relatorioSalvo; 
+    }
+
+    protected abstract void validateMandatoryFieldsImp(DTO relatorioDTO, ArrayList<String> errors);
+    protected abstract void validateFieldConstraintsImp(DTO relatorioDTO, ArrayList<String> errors);
+
+    protected abstract T relatorioFactory();
+}

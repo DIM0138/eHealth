@@ -49,13 +49,4 @@ public class UsuarioController<T extends Usuario, DTO extends UsuarioDTO> {
     public Boolean login(@RequestParam("login") String login, @RequestParam("senha") String senha) {
         return this.usuarioService.login(login, senha);
     }
-
-    @GetMapping("/existe")
-    public Boolean existe(@RequestParam(value = "id", required = false) Long id,
-                          @RequestParam(value = "cpf", required = false) String cpf,
-                          @RequestParam(value = "login", required = false) String login,
-                          @RequestParam(value = "email", required = false) String email) {
-
-        return this.usuarioService.existe(id, cpf, login, email);
-    }
 }

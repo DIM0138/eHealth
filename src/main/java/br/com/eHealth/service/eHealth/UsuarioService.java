@@ -112,8 +112,4 @@ public abstract class UsuarioService<T extends Usuario, DTO extends UsuarioDTO> 
 
         return true;
     }
-
-    public Boolean existe(Long id, String cpf, String login, String email) {
-        return null;
-    }
 }
