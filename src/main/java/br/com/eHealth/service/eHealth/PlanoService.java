@@ -1,15 +1,16 @@
 package br.com.eHealth.service.eHealth;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 import br.com.eHealth.exception.ResourceNotFoundException;
-import br.com.eHealth.model.eHealth.Paciente;
-import br.com.eHealth.model.eHealth.Plano;
-import br.com.eHealth.model.eHealth.Profissional;
-import br.com.eHealth.model.eHealth.RegistroDiario;
+import br.com.eHealth.model.eHealth.*;
+import br.com.eHealth.repository.eHealth.AtividadeDiariaRepository;
 import br.com.eHealth.repository.eHealth.PlanoRepository;
 import br.com.eHealth.repository.eHealth.RegistroDiarioRepository;
+import br.com.eHealth.repository.eNutri.PacienteRepository;
 import br.com.eHealth.service.eNutri.PacienteService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,15 @@ public class PlanoService{
 
     @Autowired
     protected RegistroDiarioRepository registroDiarioRepository;
+
+    @Autowired
+    protected AtividadeDiariaRepository atividadeDiariaRepository;
+
+    @Autowired
+    protected PacienteRepository pacienteRepository;
+
+    @Autowired
+    protected TratamentoService tratamentoService;
 
     @Transactional
     public PlanoDTO criarPlano(PlanoDTO planoDTO) {
@@ -64,22 +74,50 @@ public class PlanoService{
     public Plano buscarPorId(Long id) {
         try {
             Plano plano = planoRepository.findById(id).get();
-            System.out.println(plano.getRegistrosDiarios());
             return plano;
         } catch (NoSuchElementException e) {
             throw new ResourceNotFoundException("Plano não encontrado");
         }
     }
 
-    public PlanoDTO ativarPlano(Long id) {
-        return null;
+    public Plano ativarPlano(Long id) {
+        Plano plano = buscarPorId(id);
+        long pacienteId = plano.getPaciente().getId();
+        Paciente paciente = pacienteService.buscarPorId(pacienteId);
+
+        if (paciente.getPlanoAtual() != null){
+            paciente.getPlanoAtual().setAtivo(false);
+        }
+        paciente.setPlanoAtual(plano);
+        plano.setAtivo(true);
+
+        pacienteRepository.save(paciente);
+        return planoRepository.save(plano);
     }
     public Boolean deletarPlano(Long id) {
-        return null;
+        Plano plano = buscarPorId(id);
+        planoRepository.delete(plano);
+        return true;
     }
 
-    public AtividadeDiariaDTO criarAtividade(AtividadeDiariaDTO atividadeDTO) {
-        return null;
+    public AtividadeDiaria criarAtividadeDiaria(AtividadeDiariaDTO atividadeDiariaDTO, Long planoId) {
+        Plano plano = buscarPorId(planoId);
+
+        Long registroDiarioId = plano.getRegistroDiarioByDate(atividadeDiariaDTO.getData()).getId();
+        RegistroDiario registroDiario = buscarRegistroDiarioPorID(registroDiarioId);
+        Tratamento tratamento = tratamentoService.buscarPorId(atividadeDiariaDTO.getTratamento().getId());
+
+
+        AtividadeDiaria novaAtividadeDiaria = new AtividadeDiaria();
+        novaAtividadeDiaria.setData(atividadeDiariaDTO.getData());
+        novaAtividadeDiaria.setHorario(atividadeDiariaDTO.getHorario());
+        novaAtividadeDiaria.setTratamento(tratamento);
+
+        AtividadeDiaria atividadeDiariaSalva = atividadeDiariaRepository.save(novaAtividadeDiaria);
+        registroDiario.adicionarAtividadeDiaria(atividadeDiariaSalva);
+        registroDiarioRepository.save(registroDiario);
+
+        return atividadeDiariaSalva;
     }
 
     public AtividadeDiariaDTO atualizarAtividade(AtividadeDiariaDTO atividadeDTO) {
@@ -90,21 +128,46 @@ public class PlanoService{
         return null;
     }
 
-    public AtividadeDiariaDTO responderAtividade(AtividadeDiariaDTO atividadeDTO) {
-        return null;
+    public AtividadeDiaria responderAtividadeDiaria(AtividadeDiariaDTO atividadeDiariaDTO) {
+        AtividadeDiaria atividadeDiaria = buscarAtividadeDiariaPorId(atividadeDiariaDTO.getId());
+        atividadeDiaria.setEmocao(atividadeDiariaDTO.getEmocao());
+        atividadeDiaria.setAtividadeFeita(atividadeDiariaDTO.getAtividadeFeita());
+
+        return atividadeDiariaRepository.save(atividadeDiaria);
     }
 
-    public RegistroDiarioDTO responderRegistroDiario(RegistroDiarioDTO registroDiarioDTO) {
-        return null;
+    private RegistroDiario buscarRegistroDiarioPorID(Long id){
+        return registroDiarioRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Registro diário não existe"));
+    }
+
+    private AtividadeDiaria buscarAtividadeDiariaPorId(Long id){
+        return atividadeDiariaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Atividade diária não existe"));
+    }
+
+    public RegistroDiario responderRegistroDiario(RegistroDiarioDTO registroDiarioDTO) {
+        RegistroDiario registroDiario = buscarRegistroDiarioPorID(registroDiarioDTO.getId());
+        registroDiario.addListaSintomas(registroDiarioDTO.getSintomas());
+        if (registroDiarioDTO.getQualidadeSono() != null){
+            registroDiario.setQualidadeSono(registroDiarioDTO.getQualidadeSono());
+        }
+        if (registroDiarioDTO.getQuantidadeAgua() != null){
+            List<Long> quantidadeAguaNova = registroDiarioDTO.getQuantidadeAgua();
+            registroDiario.getQuantidadeAgua().addAll(quantidadeAguaNova);
+        }
+
+        return registroDiarioRepository.save(registroDiario);
     }
 
     public List<PlanoDTO> buscarPlanosPorProfissionalId(Long id) {
-        return null;
+        Profissional profissional = (Profissional) usuarioService.buscarPorId(id);
+        List<Plano> planos = planoRepository.getByProfissionalResponsavel(profissional);
+        List<PlanoDTO> planosDTO = planos.stream().map(Plano::toDTO).toList();
+        return planosDTO;
     }
 
     public ResumoAtividadesDTO gerarResumoAtividades(Long id) {
         return null;
     }
-
-
 }

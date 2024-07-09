@@ -48,4 +48,5 @@ public class ReceitaStrategy extends TratamentoStrategy<Receita, ReceitaDTO> {
 
         return errors;
     }
+
 }

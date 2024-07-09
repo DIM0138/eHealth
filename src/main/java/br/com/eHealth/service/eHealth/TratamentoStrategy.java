@@ -56,4 +56,5 @@ public abstract class TratamentoStrategy<T extends Tratamento, DTO extends Trata
     public abstract ArrayList<String> validateMandatoryFieldImp(DTO tratamentoDTO, ArrayList<String> errors);
 
     public abstract ArrayList<String> validateFieldConstraintsImp(DTO tratamentoDTO, ArrayList<String> errors);
+
 }
