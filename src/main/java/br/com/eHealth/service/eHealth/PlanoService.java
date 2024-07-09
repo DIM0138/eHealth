@@ -166,8 +166,4 @@ public class PlanoService{
         List<PlanoDTO> planosDTO = planos.stream().map(Plano::toDTO).toList();
         return planosDTO;
     }
-
-    public ResumoAtividadesDTO gerarResumoAtividades(Long id) {
-        return null;
-    }
 }
