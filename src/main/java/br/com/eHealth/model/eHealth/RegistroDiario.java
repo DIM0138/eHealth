@@ -75,6 +75,10 @@ public class RegistroDiario {
     @Builder.Default
     private List<Long> quantidadeAgua = new ArrayList<>();
 
+    public void adicionarAtividadeDiaria(AtividadeDiaria atividadeDiaria){
+        this.atividasDiarias.add(atividadeDiaria);
+    }
+
     public void addSintoma(String sintoma) {
         this.sintomas.add(sintoma);
     }
@@ -89,8 +93,7 @@ public class RegistroDiario {
         RegistroDiarioDTO registroDiarioDTO = objectMapper.convertValue(this, RegistroDiarioDTO.class);
         List<AtividadeDiariaDTO> atividadesDiariasDTO = this.getAtividasDiarias()
                 .stream()
-                .map(atividade -> objectMapper.convertValue(atividade, AtividadeDiariaDTO.class))
-                .collect(Collectors.toList());
+                .map(AtividadeDiaria::toDTO).collect(Collectors.toList());
 
         registroDiarioDTO.setAtividadesDiarias(atividadesDiariasDTO);
 
