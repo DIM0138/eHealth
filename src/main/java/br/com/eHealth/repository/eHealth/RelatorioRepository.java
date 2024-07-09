@@ -1,6 +1,7 @@
 package br.com.eHealth.repository.eHealth;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,4 +12,6 @@ import br.com.eHealth.model.eHealth.Relatorio;
 @Repository
 public interface RelatorioRepository<T extends Relatorio> extends JpaRepository<T, Long>{
     Boolean existsByDataConsultaAndPacienteId(LocalDate data, Long id);
+    Optional<T> findByDataConsultaAndPacienteId(LocalDate data, Long id);
+    List<T> findByPacienteId(Long id);
 }
