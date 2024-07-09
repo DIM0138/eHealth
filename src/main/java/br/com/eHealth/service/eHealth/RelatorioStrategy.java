@@ -1,11 +1,13 @@
 package br.com.eHealth.service.eHealth;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import br.com.eHealth.exception.ResourceNotFoundException;
 import br.com.eHealth.model.eHealth.Medicao;
 import br.com.eHealth.model.eHealth.MedicaoRelatorio;
 import br.com.eHealth.model.eHealth.Paciente;
@@ -20,24 +22,26 @@ import br.com.eHealth.repository.eHealth.UsuarioRepository;
 public abstract class RelatorioStrategy<T extends Relatorio, DTO extends RelatorioDTO, M extends Medicao, MR extends MedicaoRelatorio> {
     
     @Autowired
-    private RelatorioRepository<T> relatorioRepository;
+    protected RelatorioRepository<T> relatorioRepository;
 
     @Autowired
-    private UsuarioRepository<Paciente> pacienteRepository;
+    protected UsuarioRepository<Paciente> pacienteRepository;
 
     @Autowired 
-    private UsuarioRepository<Profissional> profissionalRepository;
+    protected UsuarioRepository<Profissional> profissionalRepository;
 
     @Autowired
-    private MedicaoRepository<Medicao> medicaoRepository;
+    protected MedicaoRepository<Medicao> medicaoRepository;
 
     public final ArrayList<String> validateCreateRelatorio(DTO relatorioDTO) {
 
         ArrayList<String> errors = new ArrayList<String>();
 
-        if(this.relatorioRepository.existsByDataConsultaAndPacienteId(relatorioDTO.getDataConsulta().get(), relatorioDTO.getPaciente().get())) {
-            errors.add("O paciente informado já possui um relatório para esta data.");
-            return errors;
+        if(relatorioDTO.getPaciente() != null && relatorioDTO.getDataConsulta() != null) {
+            if(this.relatorioRepository.existsByDataConsultaAndPacienteId(relatorioDTO.getDataConsulta().get(), relatorioDTO.getPaciente().get())) {
+                errors.add("O paciente informado já possui um relatório para esta data.");
+                return errors;
+            }
         }
 
         validateMandatoryFields(relatorioDTO, errors);
@@ -47,6 +51,18 @@ public abstract class RelatorioStrategy<T extends Relatorio, DTO extends Relator
         }
 
         validateFieldConstraints(relatorioDTO, errors);
+
+        return errors;
+    }
+
+    public final ArrayList<String> validateUpdateRelatorio(DTO relatorioDTO, ArrayList<String> errors) {
+
+        if(relatorioDTO.getDataConsulta() != null && this.relatorioRepository.existsByDataConsultaAndPacienteId(relatorioDTO.getDataConsulta().get(), relatorioDTO.getPaciente().get())) {
+            errors.add("O paciente informado já possui um relatório para esta data.");
+            return errors;
+        }
+
+        validateMedicoesArray(relatorioDTO, errors);
 
         return errors;
     }
@@ -65,16 +81,8 @@ public abstract class RelatorioStrategy<T extends Relatorio, DTO extends Relator
             errors.add("Uma data de consulta deve ser informada");
         }
 
-        if(relatorioDTO.getMedicoes() == null || relatorioDTO.getMedicoes().isEmpty() || relatorioDTO.getMedicoes().get().isEmpty()) {
-            errors.add("Ao menos uma medição deve ser informada.");
-        }
-
-        for(MedicaoRelatorio medicaoRelatorio : relatorioDTO.getMedicoes().get()) {
-            if(medicaoRelatorio.getValor() == null){
-                errors.add("O valor de " + medicaoRelatorio.getMedicao().getNome() + " deve ser informado.");
-            }
-        }
-
+        validateMedicoesArray(relatorioDTO, errors);
+    
         validateMandatoryFieldsImp(relatorioDTO, errors);
     }
 
@@ -93,6 +101,26 @@ public abstract class RelatorioStrategy<T extends Relatorio, DTO extends Relator
         }
 
         validateFieldConstraintsImp(relatorioDTO, errors);
+    }
+
+    private final void validateMedicoesArray(DTO relatorioDTO, ArrayList<String> errors) {
+
+        if(relatorioDTO.getMedicoes() == null || relatorioDTO.getMedicoes().isEmpty() || relatorioDTO.getMedicoes().get().isEmpty()) {
+            errors.add("Ao menos uma medição deve ser informada.");
+        }
+
+        else {
+            for(MedicaoRelatorio medicaoRelatorio : relatorioDTO.getMedicoes().get()) {
+                if(medicaoRelatorio == null || medicaoRelatorio.getMedicao() == null) {
+                    errors.add("Medição inválida informada.");
+                }
+                else if(medicaoRelatorio.getValor() == null){
+                    errors.add("O valor de " + medicaoRelatorio.getMedicao().getNome() + " deve ser informado.");
+                }
+            }
+
+            validateMedicoesArrayImp(relatorioDTO, errors);
+        }
     }
 
     public final T save(DTO relatorioDTO) {
@@ -120,13 +148,46 @@ public abstract class RelatorioStrategy<T extends Relatorio, DTO extends Relator
 
         novoRelatorio.setMedicoes(relatorioDTO.getMedicoes().get());
 
-        T relatorioSalvo = this.relatorioRepository.save(novoRelatorio);
+        T relatorioSalvo = this.saveImp(novoRelatorio);
 
         return relatorioSalvo; 
     }
 
+    public final RelatorioDTO update(DTO relatorioDTO, Long id) {
+        T relatorio = this.relatorioRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Relatório de ID " + id + " não encontrado."));
+
+        for(MedicaoRelatorio medicaoRelatorio : relatorioDTO.getMedicoes().get()) {
+            Optional<Medicao> medicaoExistente = this.medicaoRepository.findOneByNomeIgnoreCaseAndUnidadeIgnoreCase(medicaoRelatorio.getMedicao().getNome(), medicaoRelatorio.getMedicao().getUnidade());
+            if(medicaoExistente.isPresent()) {
+                medicaoRelatorio.setMedicao(medicaoExistente.get());
+            }
+            else {
+                Medicao novaMedicao = this.medicaoRepository.save(medicaoRelatorio.getMedicao());
+                medicaoRelatorio.setMedicao(novaMedicao);
+                relatorio.getMedicoes().add(medicaoRelatorio);
+            }
+        }
+
+        for(MedicaoRelatorio medicaoRelatorio : relatorioDTO.getMedicoes().get()) {
+            for(MedicaoRelatorio medicaoRelatorioExistente : relatorio.getMedicoes()) {
+                if(medicaoRelatorio.getMedicao().equals(medicaoRelatorioExistente.getMedicao())) {
+                    medicaoRelatorioExistente.setValor(medicaoRelatorio.getValor());
+                }
+            }
+        }
+
+        if(relatorioDTO.getDataConsulta().isPresent()) {
+            relatorio.setDataConsulta(relatorioDTO.getDataConsulta().get());
+        }
+
+        return this.saveImp(relatorio).toDTO();
+    }
+
     protected abstract void validateMandatoryFieldsImp(DTO relatorioDTO, ArrayList<String> errors);
     protected abstract void validateFieldConstraintsImp(DTO relatorioDTO, ArrayList<String> errors);
+    protected abstract void validateMedicoesArrayImp(DTO relatorioDTO, ArrayList<String> errors);
+    protected abstract T saveImp(T novoRelatorio);
+
 
     protected abstract T relatorioFactory();
 }

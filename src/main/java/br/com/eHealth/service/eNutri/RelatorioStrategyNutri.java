@@ -1,6 +1,8 @@
 package br.com.eHealth.service.eNutri;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
@@ -26,5 +28,16 @@ public class RelatorioStrategyNutri extends RelatorioStrategy<Relatorio, Relator
     protected Relatorio relatorioFactory() {
         return new Relatorio();
     }
+
+    @Override
+    protected void validateMedicoesArrayImp(RelatorioDTO relatorioDTO, ArrayList<String> errors) {
+
+    }
+
+    @Override
+    protected Relatorio saveImp(Relatorio novoRelatorio) {
+        return this.relatorioRepository.save(novoRelatorio);
+    }
+
     
 }

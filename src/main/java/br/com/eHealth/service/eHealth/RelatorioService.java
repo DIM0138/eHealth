@@ -1,6 +1,7 @@
 package br.com.eHealth.service.eHealth;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,26 +39,46 @@ public abstract class RelatorioService<T extends Relatorio, DTO extends Relatori
     }
 
     @Transactional
-    public DTO atualizar(DTO relatorioDTO, Long id) {
+    public RelatorioDTO atualizar(DTO relatorioDTO, Long id) {
+        ArrayList<String> errors = new ArrayList<String>();
 
-        return null;
+        errors = this.relatorioStrategy.validateUpdateRelatorio(relatorioDTO, errors);
+
+        if (!errors.isEmpty()) {
+            throw new ValidationException(errors);
+        }
+
+        return this.relatorioStrategy.update(relatorioDTO, id);
     }
 
-    public RelatorioDTO buscarPorId(Long id) {
+    public T buscarPorId(Long id) {
         Optional<T> relatorio = this.relatorioRepository.findById(id);
 
         if (relatorio.isEmpty()) {
             throw new ResourceNotFoundException("Relatório de ID " + id + " não encontrado");
         }
 
-        return relatorio.get().toDTO();
+        return relatorio.get();
     }
 
-    public ArrayList<DTO> buscarPorPaciente(Long idPaciente) {
-        return null;
+    public ArrayList<RelatorioDTO> buscarPorPacienteId(Long idPaciente) {
+        List<T> relatorios = this.relatorioRepository.findByPacienteId(idPaciente);
+
+        if (relatorios.isEmpty()) {
+            throw new ResourceNotFoundException("Nenhum relatório encontrado para o paciente de ID " + idPaciente);
+        }
+
+        ArrayList<RelatorioDTO> relatoriosDTO = new ArrayList<>();
+        for (T relatorio : relatorios) {
+            relatoriosDTO.add(relatorio.toDTO());
+        }
+
+        return relatoriosDTO;
     }
 
     public Boolean deletar(Long id) {
-        return null;
+        T relatorio = this.buscarPorId(id);
+        this.relatorioRepository.delete(relatorio);
+        return true;
     }
 }
