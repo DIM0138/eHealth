@@ -1,7 +1,9 @@
 package br.com.eHealth.controller.eHealth;
 
+import br.com.eHealth.model.eHealth.ResumoAtividades;
 import br.com.eHealth.model.eHealth.dto.AtividadeDiariaDTO;
 import br.com.eHealth.model.eHealth.dto.RegistroDiarioDTO;
+import br.com.eHealth.service.eHealth.ResumoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,7 +17,10 @@ import java.util.List;
 public class PlanoController{
 
    @Autowired
-   public PlanoService planoService;
+   private PlanoService planoService;
+
+   @Autowired
+   private ResumoService resumoService;
 
    @PostMapping
    public PlanoDTO criar(@RequestBody PlanoDTO planoDTO) {
@@ -61,6 +66,10 @@ public class PlanoController{
       return planoService.buscarPlanosPorProfissionalId(id);
    }
 
-//   public ResumoAtividadesDTO gerarResumoAtividades(@PathVariable Long id) { return null; }
+
+   @GetMapping("resumo/{id}")
+   public ResumoAtividades gerarResumoAtividades(@PathVariable Long id) {
+      return resumoService.gerarResumo(id);
+   }
 }
 
