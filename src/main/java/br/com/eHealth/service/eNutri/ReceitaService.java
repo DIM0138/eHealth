@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ReceitaService extends TratamentoService<Receita, ReceitaDTO> {
+    
     @Override
     public Tratamento tratamentoFactory() {
         return new Receita();
