@@ -9,6 +9,7 @@ import br.com.eHealth.model.eHealth.dto.TratamentoDTO;
 
 import java.util.List;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -20,61 +21,39 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = false)
 public class Exercicio extends Tratamento {
 
-    public enum TipoExercicio {
-        AEROBICO,
-        MUSCULACAO,
-        FLEXIBILIDADE,
-        EQUILIBRIO,
-        RESISTENCIA,
-        FUNCIONAL,
-        OUTRO
-    }
-
-    public enum GrupoMuscular {
-        SUPERIORES,
-        PEITORAL,
-        COSTAS,
-        BICEPS,
-        TRICEPS,
-        OMBROS,
-        ANTEBRACO,
-        INFERIORES,
-        QUADRICEPS,
-        PANTURRILHA,
-        GLUTEOS,
-        POSTERIORES,
-        ABDOMEN,
-        FULL_BODY,
-        OUTRO
-    }
-
     @JsonProperty("tipo_exercicio")
-    @Enumerated(EnumType.STRING)
-    private TipoExercicio tipoExercicio;
+    @Column(nullable = false)
+    private String tipoExercicio;
 
     @JsonProperty("grupos_musculares")
-    @Enumerated(EnumType.STRING)
-    private List<GrupoMuscular> gruposMusculares;
+    @Column(nullable = false)
+    private List<String> gruposMusculares;
 
     @JsonProperty("instrucoes")
+    @Column(nullable = false)
     private String instrucoes;
 
     @JsonProperty("series")
+    @Column(nullable = false)
     private int series;
 
     @JsonProperty("repeticoes")
+    @Column(nullable = false)
     private int repeticoes;
 
     @JsonProperty("carga")
     private List<Double> carga;
 
     @JsonProperty("intervalo")
+    @Column(nullable = false)
     private int intervalo;
 
     @JsonProperty("dropset")
+    @Column(nullable = false)
     private Boolean dropset;
 
     @JsonProperty("tempo")
+    @Column(nullable = false)
     private int tempo;
     
     @Override

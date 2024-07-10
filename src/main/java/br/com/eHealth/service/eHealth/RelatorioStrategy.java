@@ -118,7 +118,7 @@ public abstract class RelatorioStrategy<T extends Relatorio, DTO extends Relator
                     errors.add("O valor de " + medicaoRelatorio.getMedicao().getNome() + " deve ser informado.");
                 }
             }
-
+            
             validateMedicoesArrayImp(relatorioDTO, errors);
         }
     }

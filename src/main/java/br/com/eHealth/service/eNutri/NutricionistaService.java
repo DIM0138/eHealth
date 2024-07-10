@@ -8,7 +8,6 @@ import br.com.eHealth.model.eNutri.dto.NutricionistaDTO;
 import br.com.eHealth.service.eHealth.UsuarioService;
 
 @Service
-@Primary
 public class NutricionistaService extends UsuarioService<Nutricionista, NutricionistaDTO> {
 
 }

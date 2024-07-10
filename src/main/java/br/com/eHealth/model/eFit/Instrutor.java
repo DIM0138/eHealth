@@ -23,6 +23,7 @@ public class Instrutor extends Profissional {
     @JsonProperty("cref")
     private String CREF;
 
+    @JsonProperty("certificacoes")
     private List<String> certificacoes;
 
     @Override

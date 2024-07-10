@@ -9,7 +9,7 @@ import java.util.ArrayList;
 @Component
 public abstract class TratamentoStrategy<T extends Tratamento, DTO extends TratamentoDTO> {
 
-    public final ArrayList<String> validateMandatoryFields(DTO tratamentoDTO, ArrayList<String> errors){
+    public final void validateMandatoryFields(DTO tratamentoDTO, ArrayList<String> errors){
         if (tratamentoDTO.getNome() == null || tratamentoDTO.getNome().isEmpty()){
             errors.add("Um nome deve ser informado");
         }
@@ -18,11 +18,11 @@ public abstract class TratamentoStrategy<T extends Tratamento, DTO extends Trata
             errors.add("Uma descrição deve ser informada");
         }
 
-        return validateMandatoryFieldImp(tratamentoDTO, errors);
+        validateMandatoryFieldImp(tratamentoDTO, errors);
     }
 
-    public final ArrayList<String> validateFieldConstraints(DTO tratamentoDTO, ArrayList<String> errors){
-        return validateFieldConstraintsImp(tratamentoDTO, errors);
+    public final void validateFieldConstraints(DTO tratamentoDTO, ArrayList<String> errors){
+        validateFieldConstraintsImp(tratamentoDTO, errors);
     }
 
     public final ArrayList<String> validateCreateTratamento(DTO tratamentoDTO){
@@ -53,8 +53,10 @@ public abstract class TratamentoStrategy<T extends Tratamento, DTO extends Trata
         return errors;
     }
 
-    public abstract ArrayList<String> validateMandatoryFieldImp(DTO tratamentoDTO, ArrayList<String> errors);
+    public abstract void validateMandatoryFieldImp(DTO tratamentoDTO, ArrayList<String> errors);
 
-    public abstract ArrayList<String> validateFieldConstraintsImp(DTO tratamentoDTO, ArrayList<String> errors);
+    public abstract void validateFieldConstraintsImp(DTO tratamentoDTO, ArrayList<String> errors);
+
+    public abstract T saveImp(DTO tratamentoDTO, T novoTratamento);
 
 }

@@ -6,12 +6,14 @@ import br.com.eHealth.model.eNutri.dto.ReceitaDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Entity
 @Data
+@EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Receita extends Tratamento {

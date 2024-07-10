@@ -3,8 +3,6 @@ package br.com.eHealth.model.eFit.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import br.com.eHealth.model.eFit.Exercicio;
-import br.com.eHealth.model.eFit.Exercicio.GrupoMuscular;
-import br.com.eHealth.model.eFit.Exercicio.TipoExercicio;
 import br.com.eHealth.model.eHealth.dto.TratamentoDTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -19,31 +17,31 @@ import java.util.List;
 public class ExercicioDTO extends TratamentoDTO {
 
     @JsonProperty("tipo_exercicio")
-    private TipoExercicio tipoExercicio;
+    private String tipoExercicio;
 
     @JsonProperty("grupos_musculares")
-    private List<GrupoMuscular> gruposMusculares;
+    private List<String> gruposMusculares;
 
     @JsonProperty("instrucoes")
     private String instrucoes;
 
     @JsonProperty("series")
-    private int series;
+    private Integer series;
 
     @JsonProperty("repeticoes")
-    private int repeticoes;
+    private Integer repeticoes;
 
     @JsonProperty("carga")
     private List<Double> carga;
 
     @JsonProperty("intervalo")
-    private int intervalo;
+    private Integer intervalo;
 
     @JsonProperty("dropset")
     private Boolean dropset;
 
     @JsonProperty("tempo")
-    private int tempo;
+    private Integer tempo;
 
     public ExercicioDTO(Exercicio exercicio) {
         super(exercicio);

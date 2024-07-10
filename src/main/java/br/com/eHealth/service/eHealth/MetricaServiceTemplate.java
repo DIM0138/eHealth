@@ -6,6 +6,7 @@ import br.com.eHealth.model.eHealth.metricas.AdesaoData;
 import br.com.eHealth.model.eHealth.metricas.Metrica;
 import br.com.eHealth.repository.eHealth.PlanoRepository;
 import br.com.eHealth.service.eNutri.PacienteService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

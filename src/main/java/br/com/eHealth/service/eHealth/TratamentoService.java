@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public abstract class TratamentoService<T extends Tratamento, DTO extends TratamentoDTO> {
 
     @Autowired
-    protected TratamentoRepository tratamentoRepository;
+    protected TratamentoRepository<T> tratamentoRepository;
 
     @Autowired
     protected TratamentoStrategy<T, DTO> tratamentoStrategy;
@@ -29,11 +29,12 @@ public abstract class TratamentoService<T extends Tratamento, DTO extends Tratam
     @Transactional
     public TratamentoDTO criar(DTO tratamentoDTO) {
         ArrayList<String> errors = tratamentoStrategy.validateCreateTratamento(tratamentoDTO);
+
         if (!errors.isEmpty()){
             throw new ValidationException(errors);
         }
 
-        Tratamento novoTratamento = tratamentoFactory();
+        T novoTratamento = tratamentoFactory();
 
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.findAndRegisterModules();
@@ -44,12 +45,13 @@ public abstract class TratamentoService<T extends Tratamento, DTO extends Tratam
         } catch (JsonMappingException e) {
             throw new RuntimeException(e);
         }
-        return tratamentoRepository.save(novoTratamento).toDTO();
+
+        return this.tratamentoStrategy.saveImp(tratamentoDTO, novoTratamento).toDTO();
     }
 
-    public Tratamento buscarPorId(long id) {
+    public T buscarPorId(long id) {
         try {
-            Tratamento tratamento = tratamentoRepository.findById(id).get();
+            T tratamento = tratamentoRepository.findById(id).get();
             return tratamento;
         } catch (NoSuchElementException e) {
             throw new ResourceNotFoundException("Tratamento de ID " + id + " não encontrado.");
@@ -57,15 +59,15 @@ public abstract class TratamentoService<T extends Tratamento, DTO extends Tratam
     }
 
     public List<TratamentoDTO> buscarTodos() {
-        List<Tratamento> tratamentos = tratamentoRepository.findAll();
+        List<T> tratamentos = tratamentoRepository.findAll();
         return tratamentos.stream().map(tratamento -> tratamento.toDTO()).collect(Collectors.toList());
     }
 
-    public abstract Tratamento tratamentoFactory();
+    public abstract T tratamentoFactory();
 
     @Transactional
     public TratamentoDTO atualizar(Long id, DTO tratamentoDTO) {
-        Tratamento tratamento = buscarPorId(id);
+        T tratamento = buscarPorId(id);
 
         ArrayList<String> errors = tratamentoStrategy.validateUpdateTratamento(tratamentoDTO);
 
