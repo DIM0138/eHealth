@@ -1,15 +1,14 @@
 package br.com.eHealth.service.eHealth;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 
 import br.com.eHealth.exception.ResourceNotFoundException;
 import br.com.eHealth.model.eHealth.*;
 import br.com.eHealth.repository.eHealth.AtividadeDiariaRepository;
 import br.com.eHealth.repository.eHealth.PlanoRepository;
 import br.com.eHealth.repository.eHealth.RegistroDiarioRepository;
+import br.com.eHealth.repository.eHealth.UsuarioRepository;
 import br.com.eHealth.repository.eNutri.PacienteRepository;
 import br.com.eHealth.service.eNutri.PacienteService;
 import jakarta.transaction.Transactional;
@@ -17,19 +16,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.eHealth.model.eHealth.dto.AtividadeDiariaDTO;
 import br.com.eHealth.model.eHealth.dto.PlanoDTO;
+import br.com.eHealth.model.eHealth.dto.ProfissionalDTO;
 import br.com.eHealth.model.eHealth.dto.RegistroDiarioDTO;
-import br.com.eHealth.model.eHealth.dto.ResumoAtividadesDTO;
+import br.com.eHealth.model.eHealth.dto.UsuarioDTO;
+
 import org.springframework.stereotype.Service;
 
 @Service
 public class PlanoService{
-    // protected PlanoStrategy<P, R, A> planoStrategy;
 
     @Autowired
     protected PacienteService pacienteService;
 
     @Autowired
-    protected UsuarioService usuarioService;
+    protected UsuarioRepository<Profissional> profissionalRepository;
+
+    @Autowired
+    protected TratamentoService tratamentoService;
 
     @Autowired
     protected PlanoRepository planoRepository;
@@ -43,14 +46,12 @@ public class PlanoService{
     @Autowired
     protected PacienteRepository pacienteRepository;
 
-    @Autowired
-    protected TratamentoService tratamentoService;
 
     @Transactional
     public PlanoDTO criarPlano(PlanoDTO planoDTO) {
         Plano novoPlano = new Plano();
         Paciente paciente = pacienteService.buscarPorId(planoDTO.getPaciente());
-        Profissional profissional = (Profissional) usuarioService.buscarPorId(planoDTO.getProfissionalResponsavel());
+        Profissional profissional = profissionalRepository.findById(planoDTO.getProfissionalResponsavel()).orElseThrow(() -> new ResourceNotFoundException("Profissional de ID" + planoDTO.getProfissionalResponsavel() + "não encontrado."));
 
         novoPlano.setPaciente(paciente);
         novoPlano.setProfissionalResponsavel(profissional);
@@ -76,7 +77,7 @@ public class PlanoService{
             Plano plano = planoRepository.findById(id).get();
             return plano;
         } catch (NoSuchElementException e) {
-            throw new ResourceNotFoundException("Plano não encontrado");
+            throw new ResourceNotFoundException("Plano de ID " + id + " não encontrado.");
         }
     }
 
@@ -107,7 +108,6 @@ public class PlanoService{
         RegistroDiario registroDiario = buscarRegistroDiarioPorID(registroDiarioId);
         Tratamento tratamento = tratamentoService.buscarPorId(atividadeDiariaDTO.getTratamento().getId());
 
-
         AtividadeDiaria novaAtividadeDiaria = new AtividadeDiaria();
         novaAtividadeDiaria.setData(atividadeDiariaDTO.getData());
         novaAtividadeDiaria.setHorario(atividadeDiariaDTO.getHorario());
@@ -125,7 +125,9 @@ public class PlanoService{
     }
 
     public Boolean deletarAtividade(Long id) {
-        return null;
+        AtividadeDiaria atividadeDiaria = buscarAtividadeDiariaPorId(id);
+        atividadeDiariaRepository.delete(atividadeDiaria);
+        return true;
     }
 
     public AtividadeDiaria responderAtividadeDiaria(AtividadeDiariaDTO atividadeDiariaDTO) {
@@ -161,7 +163,7 @@ public class PlanoService{
     }
 
     public List<PlanoDTO> buscarPlanosPorProfissionalId(Long id) {
-        Profissional profissional = (Profissional) usuarioService.buscarPorId(id);
+        Profissional profissional = profissionalRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Profissional de ID" + id + "não encontrado."));
         List<Plano> planos = planoRepository.getByProfissionalResponsavel(profissional);
         List<PlanoDTO> planosDTO = planos.stream().map(Plano::toDTO).toList();
         return planosDTO;

@@ -9,6 +9,6 @@ import br.com.eHealth.model.eHealth.dto.PacienteDTO;
 
 @RestController
 @RequestMapping("/enutri/pacientes")
-public class PacienteController extends UsuarioController<Paciente, PacienteDTO>{
+public class PacienteControllerNutri extends UsuarioController<Paciente, PacienteDTO>{
 
 }
