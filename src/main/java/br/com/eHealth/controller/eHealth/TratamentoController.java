@@ -18,7 +18,7 @@ public class TratamentoController<T extends Tratamento, DTO extends TratamentoDT
 
     @PostMapping
     public TratamentoDTO criar(@RequestBody DTO tratamentoDTO){
-        return tratamentoService. criar(tratamentoDTO);
+        return tratamentoService.criar(tratamentoDTO);
     }
 
     @GetMapping("/{id}")

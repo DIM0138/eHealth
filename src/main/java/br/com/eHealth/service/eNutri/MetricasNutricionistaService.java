@@ -1,4 +1,4 @@
-package br.com.eHealth.service.eHealth;
+package br.com.eHealth.service.eNutri;
 
 import br.com.eHealth.model.eHealth.AtividadeDiaria;
 import br.com.eHealth.model.eHealth.RegistroDiario;
@@ -6,6 +6,7 @@ import br.com.eHealth.model.eHealth.metricas.AdesaoData;
 import br.com.eHealth.model.eHealth.metricas.Metrica;
 import br.com.eHealth.model.eNutri.Receita;
 import br.com.eHealth.model.eNutri.metricas.MetricaNutricionista;
+import br.com.eHealth.service.eHealth.MetricaServiceTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -22,7 +23,6 @@ public class MetricasNutricionistaService extends MetricaServiceTemplate {
     public void adicionarMetricasEspecificas(Metrica metricas, List<RegistroDiario> registrosDiarios) {
         MetricaNutricionista metricaNutricionista = (MetricaNutricionista) metricas;
         metricaNutricionista.setAdesaoTag(adesaoTag(registrosDiarios));
-        System.out.println("oi");
     }
 
     public AdesaoData adesaoTag(List<RegistroDiario> registroDiarios){
