@@ -13,6 +13,7 @@ import br.com.eHealth.model.eHealth.Medicao;
 import br.com.eHealth.model.eHealth.MedicaoRelatorio;
 import br.com.eHealth.model.eHealth.Relatorio;
 import br.com.eHealth.model.eHealth.dto.RelatorioDTO;
+import br.com.eHealth.repository.eHealth.MedicaoRelatorioRepository;
 import br.com.eHealth.repository.eHealth.RelatorioRepository;
 import jakarta.transaction.Transactional;
 
@@ -21,6 +22,9 @@ public abstract class RelatorioService<T extends Relatorio, DTO extends Relatori
     
     @Autowired
     private RelatorioRepository<T> relatorioRepository;
+
+    @Autowired
+    private MedicaoRelatorioRepository<MR> medicaoRelatorioRepository;
 
     @Autowired
     private RelatorioStrategy<T, DTO, M, MR> relatorioStrategy;
@@ -42,7 +46,7 @@ public abstract class RelatorioService<T extends Relatorio, DTO extends Relatori
     public RelatorioDTO atualizar(DTO relatorioDTO, Long id) {
         ArrayList<String> errors = new ArrayList<String>();
 
-        errors = this.relatorioStrategy.validateUpdateRelatorio(relatorioDTO, errors);
+        errors = this.relatorioStrategy.validateUpdateRelatorio(relatorioDTO, errors, id);
 
         if (!errors.isEmpty()) {
             throw new ValidationException(errors);
@@ -64,10 +68,6 @@ public abstract class RelatorioService<T extends Relatorio, DTO extends Relatori
     public ArrayList<RelatorioDTO> buscarPorPacienteId(Long idPaciente) {
         List<T> relatorios = this.relatorioRepository.findByPacienteId(idPaciente);
 
-        if (relatorios.isEmpty()) {
-            throw new ResourceNotFoundException("Nenhum relatório encontrado para o paciente de ID " + idPaciente);
-        }
-
         ArrayList<RelatorioDTO> relatoriosDTO = new ArrayList<>();
         for (T relatorio : relatorios) {
             relatoriosDTO.add(relatorio.toDTO());
@@ -79,6 +79,15 @@ public abstract class RelatorioService<T extends Relatorio, DTO extends Relatori
     public Boolean deletar(Long id) {
         T relatorio = this.buscarPorId(id);
         this.relatorioRepository.delete(relatorio);
+        return true;
+    }
+
+    public Boolean deletarMedicao(Long idRelatorio, Long idMedicao) {
+        T relatorio = this.buscarPorId(idRelatorio);
+        MR medicao = this.medicaoRelatorioRepository.findById(idMedicao).orElseThrow(() -> new ResourceNotFoundException("Medição de ID " + idMedicao + " não encontrado"));
+        
+        relatorio.getMedicoes().remove(medicao);
+        this.medicaoRelatorioRepository.delete(medicao);
         return true;
     }
 }

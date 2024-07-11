@@ -1,24 +1,23 @@
 package br.com.eHealth.service.eHealth;
 
 import java.util.List;
+import java.time.LocalDate;
+import java.util.Optional;
 import java.util.NoSuchElementException;
 
 import br.com.eHealth.exception.ResourceNotFoundException;
 import br.com.eHealth.model.eHealth.*;
 import br.com.eHealth.repository.eHealth.AtividadeDiariaRepository;
+import br.com.eHealth.repository.eHealth.PacienteRepository;
 import br.com.eHealth.repository.eHealth.PlanoRepository;
 import br.com.eHealth.repository.eHealth.RegistroDiarioRepository;
 import br.com.eHealth.repository.eHealth.UsuarioRepository;
-import br.com.eHealth.repository.eNutri.PacienteRepository;
-import br.com.eHealth.service.eNutri.PacienteService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.eHealth.model.eHealth.dto.AtividadeDiariaDTO;
 import br.com.eHealth.model.eHealth.dto.PlanoDTO;
-import br.com.eHealth.model.eHealth.dto.ProfissionalDTO;
 import br.com.eHealth.model.eHealth.dto.RegistroDiarioDTO;
-import br.com.eHealth.model.eHealth.dto.UsuarioDTO;
 
 import org.springframework.stereotype.Service;
 
@@ -107,6 +106,7 @@ public class PlanoService{
         Long registroDiarioId = plano.getRegistroDiarioByDate(atividadeDiariaDTO.getData()).getId();
         RegistroDiario registroDiario = buscarRegistroDiarioPorID(registroDiarioId);
         Tratamento tratamento = tratamentoService.buscarPorId(atividadeDiariaDTO.getTratamento().getId());
+        System.out.println(tratamento);
 
         AtividadeDiaria novaAtividadeDiaria = new AtividadeDiaria();
         novaAtividadeDiaria.setData(atividadeDiariaDTO.getData());
@@ -167,5 +167,28 @@ public class PlanoService{
         List<Plano> planos = planoRepository.getByProfissionalResponsavel(profissional);
         List<PlanoDTO> planosDTO = planos.stream().map(Plano::toDTO).toList();
         return planosDTO;
+    }
+
+    public Plano buscarPlanoAtualPorPacienteId(Long id) {
+        Optional<Plano> plano = planoRepository.findByAtivoAndPacienteId(true, id);
+
+        if (plano.isEmpty()) {
+            throw new ResourceNotFoundException("Plano ativo para paciente de ID" + id + "não encontrado.");
+        }
+
+        return plano.get();
+    }
+
+    public RegistroDiarioDTO buscarRegistroDiarioPorPacienteEData(Long id, LocalDate data) {
+
+        Plano planoAtual = buscarPlanoAtualPorPacienteId(id);
+
+        Optional<RegistroDiario> registroDiario = registroDiarioRepository.findByPlanoAndData(planoAtual, data);
+
+        if (registroDiario.isEmpty()) {
+            throw new ResourceNotFoundException("Nenhum Registro Diário encontrado para o paciente de ID " + id + " na data " + data);
+        }
+
+        return registroDiario.get().toDTO();
     }
 }

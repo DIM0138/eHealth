@@ -1,13 +1,15 @@
 package br.com.eHealth.model.eNutri;
 
 import br.com.eHealth.model.eHealth.Tratamento;
-import br.com.eHealth.model.eHealth.dto.UsuarioDTO;
 import br.com.eHealth.model.eNutri.dto.ReceitaDTO;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.List;
 
@@ -15,6 +17,7 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
+@ToString
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Receita extends Tratamento {
     public enum TipoRefeicao {
@@ -44,6 +47,7 @@ public class Receita extends Tratamento {
 
     @CollectionTable(name = "ingredientes_receita")
     @OneToMany(cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<IngredienteReceita> ingredientes;
 
     @Column(nullable = false)

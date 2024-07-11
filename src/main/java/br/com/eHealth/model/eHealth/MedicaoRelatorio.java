@@ -21,7 +21,7 @@ public class MedicaoRelatorio {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @ManyToOne()
+    @ManyToOne
     @JoinColumn(name = "medicao_id", nullable = false)
     private Medicao medicao;
 

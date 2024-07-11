@@ -1,7 +1,6 @@
 package br.com.eHealth.service.eHealth;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,9 +54,11 @@ public abstract class RelatorioStrategy<T extends Relatorio, DTO extends Relator
         return errors;
     }
 
-    public final ArrayList<String> validateUpdateRelatorio(DTO relatorioDTO, ArrayList<String> errors) {
+    public final ArrayList<String> validateUpdateRelatorio(DTO relatorioDTO, ArrayList<String> errors, Long id) {
 
-        if(relatorioDTO.getDataConsulta() != null && this.relatorioRepository.existsByDataConsultaAndPacienteId(relatorioDTO.getDataConsulta().get(), relatorioDTO.getPaciente().get())) {
+        T relatorio = this.relatorioRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Relatório de ID " + id + " não encontrado."));
+
+        if(relatorioDTO.getDataConsulta() != null && this.relatorioRepository.existsByDataConsultaAndPacienteId(relatorioDTO.getDataConsulta().get(), relatorioDTO.getPaciente().get()) && !relatorio.getDataConsulta().equals(relatorioDTO.getDataConsulta().get())) {
             errors.add("O paciente informado já possui um relatório para esta data.");
             return errors;
         }

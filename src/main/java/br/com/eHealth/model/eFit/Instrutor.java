@@ -8,7 +8,6 @@ import java.util.List;
 import br.com.eHealth.model.eFit.dto.InstrutorDTO;
 import br.com.eHealth.model.eHealth.Profissional;
 import br.com.eHealth.model.eHealth.dto.ProfissionalDTO;
-import br.com.eHealth.model.eNutri.dto.NutricionistaDTO;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import lombok.Data;

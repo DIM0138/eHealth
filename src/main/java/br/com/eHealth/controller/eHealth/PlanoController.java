@@ -5,12 +5,14 @@ import br.com.eHealth.model.eHealth.dto.AtividadeDiariaDTO;
 import br.com.eHealth.model.eHealth.dto.RegistroDiarioDTO;
 import br.com.eHealth.service.eHealth.ResumoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 import br.com.eHealth.model.eHealth.dto.PlanoDTO;
 import br.com.eHealth.service.eHealth.PlanoService;
 
 import java.util.List;
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/planos")
@@ -45,11 +47,14 @@ public class PlanoController{
 
    @PostMapping("{id}/atividade-diaria")
    public AtividadeDiariaDTO criarAtividadeDiaria(@RequestBody AtividadeDiariaDTO atividadeDiariaDTO, @PathVariable Long id) {
+      System.out.println(atividadeDiariaDTO);
       return planoService.criarAtividadeDiaria(atividadeDiariaDTO, id).toDTO();
    }
-//   public AtividadeDTO atualizarAtividade(@RequestBody A atividadeDTO) { return null; }
 
-//   public Boolean deletarAtividade(@PathVariable Long id) { return null; }
+   @DeleteMapping("atividades-diarias/{id}")
+   public Boolean deletarAtividade(@PathVariable Long id) { 
+      return planoService.deletarAtividade(id);
+   }
 
    @PostMapping("atividades-diarias/responder")
    public AtividadeDiariaDTO responderAtividadeDiaria(@RequestBody AtividadeDiariaDTO atividadeDiariaDTO) {
@@ -66,10 +71,21 @@ public class PlanoController{
       return planoService.buscarPlanosPorProfissionalId(id);
    }
 
-
    @GetMapping("resumo/{id}")
    public ResumoAtividades gerarResumoAtividades(@PathVariable Long id) {
       return resumoService.gerarResumo(id);
    }
+
+   @GetMapping("/paciente/{id}")
+   public PlanoDTO buscarPlanoPorPacienteId(@PathVariable("id") Long id){
+
+      return planoService.buscarPlanoAtualPorPacienteId(id).toDTO();
+    }
+
+    @GetMapping("/paciente/{id}/registro-diario")
+    public RegistroDiarioDTO buscarRegistroDiarioPorPacienteEData(@PathVariable("id") Long id, @RequestParam("data") @DateTimeFormat(pattern="yyyy-MM-dd") LocalDate data){
+
+        return planoService.buscarRegistroDiarioPorPacienteEData(id, data);
+    }
 }
 

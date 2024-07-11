@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.eHealth.model.eHealth.dto.TokenCadastroDTO;
 import br.com.eHealth.service.eHealth.TokenCadastroService;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/tokens")
 public class TokenCadastroController {
@@ -27,6 +29,11 @@ public class TokenCadastroController {
     @GetMapping("/{id}")
     public TokenCadastroDTO buscarToken(@PathVariable String id) {
         return this.tokenService.buscarToken(id).toDTO();
+    }
+
+    @GetMapping("/profissional/{id}")
+    public List<TokenCadastroDTO> buscarTokenPorProfissionalId(@PathVariable Long id) {
+        return this.tokenService.buscarTokensPorProfissionalId(id);
     }
 
     @DeleteMapping("/{id}")

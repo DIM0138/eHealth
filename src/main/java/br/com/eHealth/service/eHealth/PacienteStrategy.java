@@ -1,4 +1,4 @@
-package br.com.eHealth.service.eNutri;
+package br.com.eHealth.service.eHealth;
 
 import java.util.ArrayList;
 
@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 
 import br.com.eHealth.model.eHealth.Paciente;
 import br.com.eHealth.model.eHealth.dto.PacienteDTO;
-import br.com.eHealth.service.eHealth.UsuarioStrategy;
 
 @Component
 public class PacienteStrategy extends UsuarioStrategy<Paciente, PacienteDTO> {

@@ -2,7 +2,6 @@ package br.com.eHealth.model.eHealth;
 
 import br.com.eHealth.model.eHealth.dto.AtividadeDiariaDTO;
 import br.com.eHealth.model.eHealth.dto.TratamentoDTO;
-import br.com.eHealth.service.eHealth.TratamentoService;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.*;

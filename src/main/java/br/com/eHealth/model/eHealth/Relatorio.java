@@ -1,9 +1,6 @@
 package br.com.eHealth.model.eHealth;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-
 import br.com.eHealth.model.eHealth.dto.RelatorioDTO;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
@@ -12,6 +9,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
@@ -24,7 +23,7 @@ import java.util.Optional;
 
 @Data
 @Entity
-@JsonIdentityInfo(scope = Relatorio.class, generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Relatorio {
 
     @Id
@@ -46,7 +45,7 @@ public class Relatorio {
     private LocalDate dataConsulta;
 
     @CollectionTable(name = "relatorio_medicoes")
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonProperty("medicoes")
     private List<MedicaoRelatorio> medicoes;
 

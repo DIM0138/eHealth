@@ -1,15 +1,16 @@
 package br.com.eHealth.model.eHealth.dto;
 
 import br.com.eHealth.model.eHealth.AtividadeDiaria;
-import br.com.eHealth.model.eHealth.Tratamento;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.persistence.Column;
 import lombok.Data;
+import lombok.ToString;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Data
+@ToString
 public class AtividadeDiariaDTO {
     private long id;
     private LocalTime horario;

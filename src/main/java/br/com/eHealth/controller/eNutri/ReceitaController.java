@@ -7,6 +7,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/receitas")
+@RequestMapping("/enutri/receitas")
 public class ReceitaController extends TratamentoController<Receita, ReceitaDTO> {
 }

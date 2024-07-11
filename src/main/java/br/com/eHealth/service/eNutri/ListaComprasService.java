@@ -4,9 +4,11 @@ import br.com.eHealth.model.eHealth.AtividadeDiaria;
 import br.com.eHealth.model.eHealth.Plano;
 import br.com.eHealth.model.eHealth.RegistroDiario;
 import br.com.eHealth.model.eHealth.ResumoAtividades;
-import br.com.eHealth.model.eNutri.*;
-import br.com.eHealth.repository.eHealth.PlanoRepository;
-import br.com.eHealth.repository.eNutri.ReceitaRepository;
+import br.com.eHealth.model.eNutri.Ingrediente;
+import br.com.eHealth.model.eNutri.IngredienteReceita;
+import br.com.eHealth.model.eNutri.ItemListaCompras;
+import br.com.eHealth.model.eNutri.ListaCompras;
+import br.com.eHealth.model.eNutri.Receita;
 import br.com.eHealth.service.eHealth.PlanoService;
 import br.com.eHealth.service.eHealth.ResumoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +21,6 @@ import java.util.Map;
 
 @Service
 public class ListaComprasService extends ResumoService {
-
-    @Autowired
-    private ReceitaRepository receitaRepository;
-
-    @Autowired
-    private PlanoRepository planoRepository;
 
     @Autowired
     private PlanoService planoService;

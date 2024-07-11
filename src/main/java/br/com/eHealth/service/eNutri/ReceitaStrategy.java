@@ -55,6 +55,8 @@ public class ReceitaStrategy extends TratamentoStrategy<Receita, ReceitaDTO> {
     @Override
     public Receita saveImp(ReceitaDTO tratamentoDTO, Receita novoTratamento) {
 
+        System.out.println(tratamentoDTO);
+
         for (IngredienteReceita ingredienteReceita : tratamentoDTO.getIngredientes()){
             Ingrediente ingredienteExistente = ingredienteRepository.findOneByNomeIgnoreCaseAndMedida(
                     ingredienteReceita.getIngrediente().getNome(), ingredienteReceita.getIngrediente().getMedida()

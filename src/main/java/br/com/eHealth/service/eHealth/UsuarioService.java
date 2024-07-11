@@ -112,4 +112,16 @@ public abstract class UsuarioService<T extends Usuario, DTO extends UsuarioDTO> 
 
         return true;
     }
+
+    public Boolean existePorLogin(String login) {
+        return this.usuarioRepository.existsByLogin(login);
+    }
+
+    public Boolean existePorEmail(String email) {
+        return this.usuarioRepository.existsByEmail(email);
+    }
+
+    public Boolean existePorCPF(String CPF) {
+        return this.profissionalRepository.existsByCPF(CPF);
+    }
 }

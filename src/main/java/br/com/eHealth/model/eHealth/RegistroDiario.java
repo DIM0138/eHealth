@@ -1,7 +1,6 @@
 package br.com.eHealth.model.eHealth;
 
 import br.com.eHealth.model.eHealth.dto.AtividadeDiariaDTO;
-import br.com.eHealth.model.eHealth.dto.PlanoDTO;
 import br.com.eHealth.model.eHealth.dto.RegistroDiarioDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;

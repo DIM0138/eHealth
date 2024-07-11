@@ -1,6 +1,7 @@
 package br.com.eHealth.service.eHealth;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,6 +82,14 @@ public class TokenCadastroService {
         catch (NoSuchElementException e) {
             throw new ResourceNotFoundException("Token de ID " + token + " não encontrado.");
         }
+    }
+
+    public List<TokenCadastroDTO> buscarTokensPorProfissionalId(Long id) {
+        List<TokenCadastro> tokens = tokenRepository.findByProfissionalResponsavelId(id);
+
+        List<TokenCadastroDTO> tokensDTO = tokens.stream().map(TokenCadastro::toDTO).toList();
+        
+        return tokensDTO;
     }
 
     public Boolean deletarToken(String token) {

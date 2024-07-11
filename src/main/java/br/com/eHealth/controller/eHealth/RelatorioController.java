@@ -36,6 +36,11 @@ public class RelatorioController<T extends Relatorio, DTO extends RelatorioDTO, 
         return this.relatorioService.deletar(id);
     }
 
+    @DeleteMapping("/{idRelatorio}/medicao/{idMedicao}")
+    public Boolean deletarMedicao(@PathVariable Long idRelatorio, @PathVariable Long idMedicao) {
+        return this.relatorioService.deletarMedicao(idRelatorio, idMedicao);
+    }
+
     @GetMapping("/{id}")
     public RelatorioDTO buscarPorId(@PathVariable Long id) {
         return this.relatorioService.buscarPorId(id).toDTO();
